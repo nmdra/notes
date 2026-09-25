@@ -3,36 +3,35 @@
 // put your custom CSS here!
 
 // ---------------------------------------------------------------------------
-// Unpublished references
+// No highlighting
 //
-// CrawlLinks runs with `disableBrokenWikilinks: true`, so every link whose
-// target is not part of the published set (a note in a folder that is not in
-// publish.list, a blocked PDF/EPUB, a canvas we skip) carries `class="broken"`.
-// These stay in place on purpose — they show where the vault connects — but
-// they are styled so a reader can see at a glance that nothing is published
-// there. See scripts/sync-content.py and .github/workflows/deploy.yml.
+// Two things were visually noisy on every page:
+//   1. `==like this==` in the notes renders as a background mark. Quartz ships
+//      it as --textHighlight (a saturated yellow); the Catppuccin theme
+//      re-exports it as --text-highlight-bg (rosewater). Both are killed here
+//      so the mark keeps its text and loses its colour.
+//   2. every internal link got a background pill from base.scss
+//      (`a.internal { background-color: var(--highlight) }`), which made
+//      clickable links stand out from the prose.
+//
+// `!important` is required: the theme's variables are emitted into
+// static/resource-style-*.css, which is linked after this file.
 // ---------------------------------------------------------------------------
-a.internal.broken {
-  color: var(--gray);
-  text-decoration: underline dashed;
-  text-decoration-color: var(--lightgray);
-  text-underline-offset: 0.2em;
-  cursor: help;
+:root {
+  --textHighlight: transparent !important;
+  --text-highlight-bg: transparent !important;
 }
 
-// Label the link with its reason, but not when the "link" is really an
-// embedded image/pdf object (those have no text to append to).
-a.internal.broken:not(:has(img)):not(:has(object)):not(:has(iframe))::after {
-  content: " (not published)";
-  font-size: 0.78em;
-  font-style: italic;
-  opacity: 0.75;
-  white-space: nowrap;
+a.internal {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
 }
 
-// Blocked document embeds (`![[something.pdf]]`) render as an anchor around a
-// placeholder — make the placeholder obvious instead of a dead box.
-a.internal.broken img {
-  opacity: 0.4;
-  filter: grayscale(1);
+// Links whose target is not published keep working as links; they are simply
+// not dimmed. Quartz marks them with the `broken` class (disableBrokenWikilinks
+// in quartz.config.yaml) and dims them to 50% opacity in base.scss.
+a.internal.broken,
+a.internal.broken:hover {
+  opacity: 1;
 }

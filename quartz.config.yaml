@@ -35,7 +35,7 @@ configuration:
         secondary: "#284b63"
         tertiary: "#84a59d"
         highlight: rgba(143, 159, 169, 0.15)
-        textHighlight: "#fff23688"
+        textHighlight: "#00000000"
       darkMode:
         light: "#161618"
         lightgray: "#393639"
@@ -45,7 +45,7 @@ configuration:
         secondary: "#7b97aa"
         tertiary: "#84a59d"
         highlight: rgba(143, 159, 169, 0.15)
-        textHighlight: "#b3aa0288"
+        textHighlight: "#00000000"
 plugins:
   - source: "@quartz-community/created-modified-date"
     enabled: true
@@ -93,8 +93,9 @@ plugins:
     enabled: true
     options:
       markdownLinkResolution: shortest
-      # links into folders that are not published (and blocked PDFs) get a
-      # `broken` class so custom.scss can mark them instead of 404-ing silently
+      # unresolved links (unpublished folders, blocked PDFs, skipped canvases)
+      # keep a `broken` class as a hook, but are shown like any other link —
+      # styling them was tried and read as noise, see quartz/styles/custom.scss
       disableBrokenWikilinks: true
     order: 60
   - source: "@quartz-community/description"
@@ -122,7 +123,8 @@ plugins:
   - source: "@quartz-themes/core"
     enabled: true
     options:
-      theme: default
+      theme: catppuccin
+      variation: macchiato
       mode: both
   - source: "@quartz-community/remove-draft"
     enabled: true
