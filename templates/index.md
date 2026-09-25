@@ -4,13 +4,18 @@ title: Nimendra's Notes
 
 # Hey 👋, I'm Nimendra
 
-- Browse the folders in the **explorer** on the left, or use **search**.
-- Longer-form writing lives on the **[blog](https://blog.nimendra.online/)**.
-- More about me on **[About](https://blog.nimendra.online/about)**.
+Welcome to my notes.
 
-**Elsewhere:**
+Browse the folders in the **explorer** on the left, or use **search** to find something specific.
 
-[GitHub](https://github.com/nmdra) · [LinkedIn](https://www.linkedin.com/in/nimendra/) · [X](https://x.com/nimendra_) · [Bluesky](https://bsky.app/profile/nimendra.xyz) · [Email](mailto:nimendraonline@gmail.com)
+**Explore more**
+
+- **[Read my blog](https://blog.nimendra.online/)** — longer-form writing and essays
+- **[Learn more about me](https://blog.nimendra.online/about)** — a little more about who I am
+
+**Find me elsewhere**
+
+[View my GitHub](https://github.com/nmdra) · [Connect on LinkedIn](https://www.linkedin.com/in/nimendra/) · [Follow me on X](https://x.com/nimendra_) · [Find me on Bluesky](https://bsky.app/profile/nimendra.xyz) · [Send me an email](mailto:nimendraonline@gmail.com)
 
 > [!WARNING]
-> Some linked PDFs and notes have not been published yet. The corresponding pages may currently return a 404 (Not Found) error. These links will become available once the content is published.
+> Some notes and linked PDFs haven't been published yet, so their pages may currently return a **404 (Not Found)** error. They'll become available as the corresponding content is published.
