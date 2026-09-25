@@ -1,5 +1,5 @@
 ---
-title: Notes
+title: Nimendra's Notes
 ---
 
 # Hey 👋, I'm Nimendra
