@@ -1,0 +1,44 @@
+{
+  "name": "link-notice",
+  "version": "1.0.0",
+  "description": "Shows a toast when a click targets an unpublished (broken) internal link or a blocked document",
+  "type": "module",
+  "license": "MIT",
+  "author": "Nimendra",
+  "keywords": [
+    "quartz",
+    "quartz-plugin",
+    "links",
+    "notice"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./index.js"
+    },
+    "./components": {
+      "import": "./components/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "quartz": {
+    "name": "link-notice",
+    "displayName": "Link Notice",
+    "category": "component",
+    "version": "1.0.0",
+    "quartzVersion": ">=5.0.0",
+    "dependencies": [],
+    "defaultOrder": 100,
+    "defaultEnabled": true,
+    "components": {
+      "LinkNotice": {
+        "displayName": "Link Notice",
+        "defaultPosition": "afterBody",
+        "defaultPriority": 100
+      }
+    }
+  }
+}

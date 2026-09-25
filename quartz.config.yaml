@@ -170,6 +170,14 @@ plugins:
     enabled: true
   - source: "@quartz-community/explorer"
     enabled: true
+    options:
+      title: Explorer
+      # chevron collapses; folder name navigates to the folder's index page
+      folderClickBehavior: link
+      # folders start collapsed, except the branch of the current page;
+      # expansion state is persisted in localStorage
+      folderDefaultState: collapsed
+      useSavedState: true
     layout:
       position: left
       priority: 50
@@ -242,7 +250,7 @@ plugins:
       position: beforeBody
       priority: 20
   - source: "@quartz-community/tag-list"
-    enabled: false
+    enabled: true
     layout:
       position: beforeBody
       priority: 30
@@ -281,7 +289,9 @@ plugins:
     enabled: true
     options:
       links:
-        GitHub: https://github.com/nmdra/notes
+        Blog: https://blog.nimendra.online/
+        GitHub: https://github.com/nmdra
+        X: https://x.com/nimendra_
     layout:
       position: footer
       priority: 50
@@ -298,6 +308,13 @@ plugins:
       position: afterBody
       priority: 10
       condition: is-index
+  # intercepts clicks on broken wikilinks and blocked documents (PDFs etc.)
+  # and shows a toast instead of navigating to a 404
+  - source: "./quartz/plugins/link-notice"
+    enabled: true
+    layout:
+      position: afterBody
+      priority: 100
   - source: "@quartz-community/spacer"
     enabled: true
     options: {}

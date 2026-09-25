@@ -362,6 +362,29 @@ pre {
     border-left: 2px solid var(--tertiary);
     padding-left: 0.4rem;
   }
+
+  // parity with file rows: folders get the same hover pill
+  .folder-container {
+    border-radius: 6px;
+    transition: background-color 120ms ease;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--dark) 7%, transparent);
+    }
+  }
+
+  // roomier rows for wrapped two-line titles
+  .folder-container,
+  a.nav-file-title {
+    line-height: 1.35;
+    padding-block: 3px;
+  }
+
+  a.nav-file-title:focus-visible,
+  .folder-button:focus-visible {
+    outline: 2px solid var(--tertiary);
+    outline-offset: 1px;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -370,5 +393,35 @@ pre {
 @media all and (min-width: 1400px) {
   .center {
     max-width: 850px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Toast for clicks on unpublished (broken) links and blocked documents
+// ---------------------------------------------------------------------------
+#link-notice {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  z-index: 1100;
+  max-width: min(90vw, 30rem);
+  padding: 0.6rem 0.95rem;
+  border: 1px solid color-mix(in srgb, var(--dark) 18%, transparent);
+  border-radius: 8px;
+  background-color: var(--light);
+  color: var(--dark);
+  box-shadow: 0 6px 24px color-mix(in srgb, var(--dark) 22%, transparent);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 8px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+
+  &.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
   }
 }
