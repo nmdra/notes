@@ -175,11 +175,47 @@ plugins:
       priority: 50
   - source: "@quartz-community/graph"
     enabled: true
+    options:
+      localGraph:
+        drag: true
+        zoom: true
+        depth: 1
+        scale: 1.1
+        repelForce: 0.5
+        centerForce: 0.3
+        linkDistance: 30
+        fontSize: 0.6
+        opacityScale: 1
+        removeTags: []
+        showTags: true
+        enableRadial: false
+      globalGraph:
+        drag: true
+        zoom: true
+        depth: -1
+        scale: 0.9
+        repelForce: 0.5
+        centerForce: 0.3
+        linkDistance: 30
+        fontSize: 0.6
+        opacityScale: 1
+        removeTags: []
+        showTags: true
+        focusOnHover: true
+        enableRadial: true
     layout:
       position: right
       priority: 10
   - source: "@quartz-community/search"
     enabled: true
+    options:
+      # full text: title, body text and tags are all indexed; the preview
+      # excerpt under each hit comes from the body.
+      enablePreview: true
+      fieldPriority:
+        - title
+        - content
+        - tags
     layout:
       position: left
       priority: 20
