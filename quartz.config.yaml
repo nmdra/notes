@@ -193,10 +193,10 @@ plugins:
         zoom: true
         depth: 1
         scale: 1.1
-        repelForce: 0.5
+        repelForce: 0.6
         centerForce: 0.3
-        linkDistance: 30
-        fontSize: 0.6
+        linkDistance: 35
+        fontSize: 0.75
         opacityScale: 1
         removeTags: []
         showTags: true
@@ -206,10 +206,10 @@ plugins:
         zoom: true
         depth: -1
         scale: 0.9
-        repelForce: 0.5
+        repelForce: 0.6
         centerForce: 0.3
-        linkDistance: 30
-        fontSize: 0.6
+        linkDistance: 35
+        fontSize: 0.75
         opacityScale: 1
         removeTags: []
         showTags: true
@@ -296,6 +296,41 @@ plugins:
     layout:
       position: footer
       priority: 50
+  # Homepage global graph — full vault map, only on index page
+  - source: "./quartz/plugins/graph-local"
+    enabled: true
+    options:
+      localGraph:
+        drag: true
+        zoom: true
+        depth: -1
+        scale: 1.1
+        repelForce: 0.7
+        centerForce: 0.3
+        linkDistance: 45
+        fontSize: 0.8
+        opacityScale: 1
+        removeTags: []
+        showTags: true
+        enableRadial: true
+      globalGraph:
+        drag: true
+        zoom: true
+        depth: -1
+        scale: 0.9
+        repelForce: 0.7
+        centerForce: 0.3
+        linkDistance: 45
+        fontSize: 0.8
+        opacityScale: 1
+        removeTags: []
+        showTags: true
+        focusOnHover: true
+        enableRadial: true
+    layout:
+      position: afterBody
+      priority: 5
+      condition: is-index
   - source: "@quartz-community/recent-notes"
     enabled: true
     options:
@@ -308,41 +343,6 @@ plugins:
     layout:
       position: afterBody
       priority: 10
-      condition: is-index
-  # Homepage global graph — full vault map, only on index page
-  - source: "./quartz/plugins/graph-local"
-    enabled: true
-    options:
-      localGraph:
-        drag: true
-        zoom: true
-        depth: -1
-        scale: 1.1
-        repelForce: 0.5
-        centerForce: 0.3
-        linkDistance: 30
-        fontSize: 0.6
-        opacityScale: 1
-        removeTags: []
-        showTags: true
-        enableRadial: true
-      globalGraph:
-        drag: true
-        zoom: true
-        depth: -1
-        scale: 0.9
-        repelForce: 0.5
-        centerForce: 0.3
-        linkDistance: 30
-        fontSize: 0.6
-        opacityScale: 1
-        removeTags: []
-        showTags: true
-        focusOnHover: true
-        enableRadial: true
-    layout:
-      position: afterBody
-      priority: 20
       condition: is-index
   # intercepts clicks on broken wikilinks and blocked documents (PDFs etc.)
   # and shows a toast instead of navigating to a 404

@@ -101,10 +101,12 @@ body .note-properties .note-properties-tags .tag-link:hover {
   --graph-node-neighbor: #ca9ee6; // frappé mauve
   --graph-node-other: #737994; // frappé overlay0
   --hero-accent: #ca9ee6; // frappé mauve — --tertiary is a duplicate of --secondary here
+  --graph-link: #9ca0b0; // frappé overlay0/surface2 for crisp link lines
 }
 
-:root([saved-theme="dark"]) {
+:root[saved-theme="dark"] {
   --hero-accent: rgb(var(--ctp-mauve)); // macchiato mauve
+  --graph-link: #6e738d; // macchiato overlay0/surface2 for crisp link lines
 }
 
 // ---------------------------------------------------------------------------
@@ -529,11 +531,12 @@ body[data-slug="index"] {
   }
 
   .page-footer .graph {
-    margin-top: 2rem;
+    margin-top: 1.5rem;
+    margin-bottom: 2.5rem;
 
     .graph-outer {
-      height: 420px;
-      max-height: 55vh;
+      height: 440px;
+      max-height: 60vh;
       border: 1px solid var(--lightgray);
       border-radius: 10px;
       overflow: hidden;
