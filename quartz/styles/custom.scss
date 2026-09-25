@@ -401,8 +401,8 @@ pre {
 // ---------------------------------------------------------------------------
 #link-notice {
   position: fixed;
-  bottom: 1.25rem;
-  left: 50%;
+  top: 1rem;
+  right: 1rem;
   z-index: 1100;
   max-width: min(90vw, 30rem);
   padding: 0.6rem 0.95rem;
@@ -415,13 +415,13 @@ pre {
   line-height: 1.4;
   opacity: 0;
   pointer-events: none;
-  transform: translate(-50%, 8px);
+  transform: translateY(-8px);
   transition:
     opacity 180ms ease,
     transform 180ms ease;
 
   &.show {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translateY(0);
   }
 }

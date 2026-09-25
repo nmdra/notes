@@ -88,7 +88,7 @@ plugins:
     order: 50
     layout:
       position: right
-      priority: 30
+      priority: 10
   - source: "@quartz-community/crawl-links"
     enabled: true
     options:
@@ -217,7 +217,7 @@ plugins:
         enableRadial: true
     layout:
       position: right
-      priority: 10
+      priority: 50
   - source: "@quartz-community/search"
     enabled: true
     options:
@@ -238,7 +238,7 @@ plugins:
     enabled: true
     layout:
       position: right
-      priority: 50
+      priority: 30
   - source: "@quartz-community/article-title"
     enabled: true
     layout:
@@ -249,8 +249,9 @@ plugins:
     layout:
       position: beforeBody
       priority: 20
+  # off: notes already show inline tags twice (content-meta + body)
   - source: "@quartz-community/tag-list"
-    enabled: true
+    enabled: false
     layout:
       position: beforeBody
       priority: 30
@@ -291,7 +292,7 @@ plugins:
       links:
         Blog: https://blog.nimendra.online/
         GitHub: https://github.com/nmdra
-        X: https://x.com/nimendra_
+        X(Twitter): https://x.com/nimendra_
     layout:
       position: footer
       priority: 50
@@ -300,7 +301,7 @@ plugins:
     options:
       title: "📝 Recently Updated"
       limit: 5
-      showTags: false
+      showTags: true
       hideTagPages: true
       hideFolderPages: true
       linkToMore: false
