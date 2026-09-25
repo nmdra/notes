@@ -12,3 +12,8 @@ replit.nix
 .quartz/
 quartz/cli/tui/dist/
 .turbo/
+
+# content/ IS tracked: it is produced locally by scripts/sync-content.py from
+# the (private) Obsidian vault and committed. The sync script only ever copies
+# what publish.list allows, so nothing outside the publish set can enter git.
+# Run ./scripts/sync-content.py after editing notes, then commit.
