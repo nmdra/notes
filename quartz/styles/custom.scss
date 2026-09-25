@@ -518,3 +518,231 @@ pre {
     transform: translateY(0);
   }
 }
+
+// ---------------------------------------------------------------------------
+// Homepage global graph — taller container in afterBody
+// ---------------------------------------------------------------------------
+body[data-slug="index"] {
+  // Hide the duplicate small local graph in the right sidebar on homepage
+  .sidebar.right .graph {
+    display: none;
+  }
+
+  .page-footer .graph {
+    margin-top: 2rem;
+
+    .graph-outer {
+      height: 420px;
+      max-height: 55vh;
+      border: 1px solid var(--lightgray);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    > h3 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--secondary);
+      margin-bottom: 0.75rem;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Popovers — card-style hover previews
+// ---------------------------------------------------------------------------
+.popover {
+  border-radius: 10px;
+  border: 1px solid var(--lightgray);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+
+  > .popover-inner {
+    border: none;
+    padding: 0.8rem 1rem;
+  }
+
+  h1 {
+    font-size: 1.1rem;
+    margin-top: 0;
+    margin-bottom: 0.4rem;
+    color: var(--secondary);
+  }
+
+  p {
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Blockquotes — gradient left border, subtle background
+// ---------------------------------------------------------------------------
+blockquote {
+  border-left: 3px solid var(--secondary);
+  border-image: linear-gradient(
+    to bottom,
+    var(--secondary),
+    var(--tertiary)
+  ) 1;
+  background: color-mix(in srgb, var(--lightgray) 30%, transparent);
+  padding: 0.6rem 1rem;
+  border-radius: 0 6px 6px 0;
+}
+
+// ---------------------------------------------------------------------------
+// Tables — alternating rows, hover, rounded container
+// ---------------------------------------------------------------------------
+.table-container {
+  border: 1px solid var(--lightgray);
+  border-radius: 8px;
+  overflow: hidden;
+
+  > table {
+    margin: 0;
+    width: 100%;
+
+    th {
+      background: color-mix(in srgb, var(--lightgray) 60%, transparent);
+      font-size: 0.9em;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:nth-child(even) {
+      background: color-mix(in srgb, var(--lightgray) 25%, transparent);
+    }
+
+    tr:hover {
+      background: color-mix(in srgb, var(--tertiary) 8%, transparent);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Footer — subtle separator, compact links
+// ---------------------------------------------------------------------------
+footer {
+  border-top: 1px solid var(--lightgray);
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+
+  p {
+    font-size: 0.82rem;
+    opacity: 0.7;
+  }
+
+  a {
+    font-weight: 500;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--tertiary);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// SPA page transition — fade in content
+// ---------------------------------------------------------------------------
+article {
+  animation: fadeInUp 0.25s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Inline code — subtle outline, better contrast
+// ---------------------------------------------------------------------------
+code:not(pre code) {
+  border: 1px solid color-mix(in srgb, var(--gray) 40%, transparent);
+  padding: 0.15rem 0.35rem;
+}
+
+// ---------------------------------------------------------------------------
+// Mobile top bar — cleaner spacing, subtle bottom border
+// ---------------------------------------------------------------------------
+@media all and (max-width: 800px) {
+  .sidebar.left {
+    border-bottom: 1px solid var(--lightgray);
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .page-title {
+    font-size: 1rem;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Breadcrumbs — quieter, muted trail
+// ---------------------------------------------------------------------------
+.breadcrumb-container {
+  font-size: 0.82rem;
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
+
+  a {
+    font-weight: 500;
+    color: var(--darkgray);
+
+    &:hover {
+      color: var(--secondary);
+    }
+  }
+
+  .breadcrumb-element:not(:last-child)::after {
+    opacity: 0.4;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Content meta — date and reading time
+// ---------------------------------------------------------------------------
+.content-meta {
+  font-size: 0.82rem;
+  opacity: 0.65;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--lightgray);
+  margin-bottom: 1.5rem;
+}
+
+// ---------------------------------------------------------------------------
+// Custom scrollbar — matches Catppuccin surface
+// ---------------------------------------------------------------------------
+:root[saved-theme="dark"] {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--gray) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--gray);
+    border-radius: 3px;
+
+    &:hover {
+      background: var(--darkgray);
+    }
+  }
+}
