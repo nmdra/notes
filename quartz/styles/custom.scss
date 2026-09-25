@@ -96,3 +96,46 @@ body .note-properties .note-properties-tags .tag-link:hover {
   --graph-node-neighbor: #ca9ee6; // frappé mauve
   --graph-node-other: #737994; // frappé overlay0
 }
+
+// ---------------------------------------------------------------------------
+// Search overlay — opaque panels (both themes)
+//
+// The theme ships rules (`html[saved-theme="light"|"dark"] body .search >
+// .search-container > .search-space > *`, `.search-layout > .results-container`,
+// `.search-layout > .preview-container`, `.result-card`, …) that blank the
+// plugin's `background: var(--light)` back to rgba(0,0,0,0), so results and the
+// preview float on a blurred page and are unreadable. Those rules are unlayered
+// and load after this file, so the surfaces are restated with !important:
+// a scrim behind the whole overlay, and solid input + panel backgrounds.
+// `--light` is the surface color in both modes (dark surface in dark mode).
+// ---------------------------------------------------------------------------
+.search > .search-container {
+  background-color: color-mix(in srgb, var(--light) 82%, transparent) !important;
+}
+
+.search > .search-container > .search-space > input,
+.search > .search-container > .search-space > .search-layout,
+.search > .search-container > .search-space > .search-layout > * {
+  background-color: var(--light) !important;
+}
+
+.search
+  > .search-container
+  > .search-space
+  > .search-layout
+  > .results-container
+  .result-card:hover,
+.search
+  > .search-container
+  > .search-space
+  > .search-layout
+  > .results-container
+  .result-card:focus,
+.search
+  > .search-container
+  > .search-space
+  > .search-layout
+  > .results-container
+  .result-card.focus {
+  background-color: var(--lightgray) !important;
+}
