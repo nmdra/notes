@@ -36,6 +36,9 @@ export const LinkNotice = () => {
       if (!href || href.charAt(0) === "#") return
       if (/^[a-z][a-z0-9+.-]*:/i.test(href)) return
       var path = href.split(/[?#]/)[0]
+      // tag links carry the broken class (tag slugs are not in the slug
+      // set) but resolve to real tag pages — let them navigate
+      if (a.classList.contains("tag-link")) return
       if (a.classList.contains("broken") || ASSET_RE.test(path)) {
         e.preventDefault()
         e.stopPropagation()
