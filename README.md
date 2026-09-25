@@ -48,7 +48,7 @@ npx quartz build --serve         # http://localhost:8080
 | ------------------------------ | ------------------------------------------------------------------ |
 | `publish.list`                 | folder allowlist — the only knob for what goes public              |
 | `scripts/sync-content.py`      | vault → `content/` sync, extension allowlist, report               |
-| `content/`                     | generated copy of the published set (committed, regenerated in CI) |
+| `content/`                     | generated from the vault, never committed                          |
 | `templates/index.md`           | homepage source                                                    |
 | `quartz.config.yaml`           | site config: baseUrl, plugins, `ignorePatterns`                    |
 | `quartz/styles/custom.scss`    | site-specific CSS overrides                                        |
