@@ -397,6 +397,99 @@ pre {
 }
 
 // ---------------------------------------------------------------------------
+// Right sidebar — TOC, backlinks, graph
+//
+// Three problems fixed here, all visible on desktop:
+//
+// 1. Collapsing the TOC hid it completely. The plugin's collapsed state
+//    shrinks `.toc` to 1.4rem, but the global `h3` rules (1.62rem top and
+//    bottom margins, 1.12rem font) made the header button ~63px tall, so the
+//    header was clipped out of the 1.4rem box together with the list. The
+//    header is flattened (no margins, 1rem font) and the collapsed box is
+//    allowed to hug the header, with the list itself display:none — the
+//    chevron row stays visible and clickable to expand again.
+// 2. Section headings (`Table of Contents`, `Backlinks`, `Graph View`) rendered
+//    at the article h3 size in the accent blue, which outweighed the content
+//    they label. They are normalized to a small, quiet label style shared by
+//    all three sections.
+// 3. The three sections ran into each other — sidebar gap is the only spacing
+//    they get — so each section gets a hairline separator instead.
+// ---------------------------------------------------------------------------
+.sidebar.right .toc .toc-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+.sidebar.right .toc:has(> .toc-header.collapsed) {
+  flex: 0 1 auto;
+}
+
+.sidebar.right .toc .toc-content.collapsed {
+  display: none;
+}
+
+.sidebar.right {
+  .toc > .toc-header,
+  .backlinks > h3,
+  .graph > h3 {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--darkgray);
+    margin-top: 0;
+    margin-bottom: 0.4rem;
+  }
+
+  .toc > .toc-header {
+    padding-block: 0.2rem;
+    border-radius: 6px;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--dark) 6%, transparent);
+    }
+  }
+
+  .backlinks,
+  .graph {
+    padding-top: 1rem;
+    border-top: 1px solid var(--lightgray);
+  }
+
+  .backlinks > ul.overflow > li > a {
+    display: block;
+    padding: 0.25rem 0.5rem;
+    margin-left: -0.5rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.35;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--dark) 6%, transparent);
+    }
+  }
+
+  .toc .toc-content.overflow > li > a {
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.35;
+    padding-block: 0.15rem;
+
+    &.in-view {
+      opacity: 1;
+      color: var(--secondary);
+    }
+  }
+
+  .graph > .graph-outer {
+    border-radius: 8px;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Toast for clicks on unpublished (broken) links and blocked documents
 // ---------------------------------------------------------------------------
 #link-notice {

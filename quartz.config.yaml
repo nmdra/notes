@@ -301,7 +301,7 @@ plugins:
     options:
       title: "📝 Recently Updated"
       limit: 5
-      showTags: true
+      showTags: false
       hideTagPages: true
       hideFolderPages: true
       linkToMore: false
