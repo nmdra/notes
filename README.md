@@ -23,14 +23,16 @@ EPUB, Office file, canvas or base reaches `content/` or `public/`.
 
 ## Publish a note
 
-1. Edit `publish.list` if a new folder (or exclusion) is needed.
-2. Run `./scripts/sync-content.py`. It copies only what `publish.list` allows out of the
-   vault and prints a report: blocked documents, links that leave the publish set, and
-   unresolved references.
-3. Commit and push to `v5`.
+Write the note in Obsidian, then push this repository to `v5`. CI:
 
-The GitHub Actions workflow rebuilds and deploys. It never sees the vault — `content/` is
-committed, so the pipeline only needs `npm ci` and a build.
+1. checks out the private vault `nmdra/Second-Brain` with the `REPO_KEY` secret,
+2. runs `./scripts/sync-content.py --vault vault` to write `content/`,
+3. fails the build if a document-shaped file ever reaches `content/` or `public/`,
+4. builds and deploys to GitHub Pages.
+
+The workflow never reads `content/` from the push — it is regenerated on every
+deploy, so a stale or hand-edited copy cannot go live. Running the sync locally
+(before `npx quartz build`) keeps your preview identical to what CI publishes.
 
 ## Local preview
 
@@ -42,15 +44,21 @@ npx quartz build --serve         # http://localhost:8080
 
 ## Layout
 
-| Path                           | Purpose                                               |
-| ------------------------------ | ----------------------------------------------------- |
-| `publish.list`                 | folder allowlist — the only knob for what goes public |
-| `scripts/sync-content.py`      | vault → `content/` sync, extension allowlist, report  |
-| `content/`                     | generated, committed copy of the published set        |
-| `templates/index.md`           | homepage source                                       |
-| `quartz.config.yaml`           | site config: baseUrl, plugins, `ignorePatterns`       |
-| `quartz/styles/custom.scss`    | site-specific CSS overrides                           |
-| `.github/workflows/deploy.yml` | build + deploy with the copyright gates               |
+| Path                           | Purpose                                                            |
+| ------------------------------ | ------------------------------------------------------------------ |
+| `publish.list`                 | folder allowlist — the only knob for what goes public              |
+| `scripts/sync-content.py`      | vault → `content/` sync, extension allowlist, report               |
+| `content/`                     | generated copy of the published set (committed, regenerated in CI) |
+| `templates/index.md`           | homepage source                                                    |
+| `quartz.config.yaml`           | site config: baseUrl, plugins, `ignorePatterns`                    |
+| `quartz/styles/custom.scss`    | site-specific CSS overrides                                        |
+| `.github/workflows/deploy.yml` | vault checkout → sync → gates → build → deploy                     |
+
+### Secrets
+
+| Secret     | Used for                                                        |
+| ---------- | --------------------------------------------------------------- |
+| `REPO_KEY` | read access to the private `nmdra/Second-Brain` vault during CI |
 
 ## Custom domain
 

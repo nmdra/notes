@@ -23,6 +23,33 @@ jobs:
         with:
           fetch-depth: 0 # git info for note dates
 
+      # The vault is private. REPO_KEY is a PAT with read access to
+      # nmdra/Second-Brain; without it CI has no source to publish from, so
+      # fail before checkout produces its own opaque error.
+      - name: Check vault credentials
+        env:
+          REPO_KEY: ${{ secrets.REPO_KEY }}
+        run: |
+          if [ -z "$REPO_KEY" ]; then
+            echo "::error::REPO_KEY is not set on this repository — CI cannot read nmdra/Second-Brain"
+            exit 1
+          fi
+          echo "REPO_KEY present"
+
+      - name: Check out the vault
+        uses: actions/checkout@v6
+        with:
+          repository: nmdra/Second-Brain
+          token: ${{ secrets.REPO_KEY }}
+          path: vault
+          fetch-depth: 1
+          persist-credentials: false # never leave the token in .git/config
+
+      # content/ is written here, not trusted from the push: sync-content.py
+      # copies only what publish.list allows and only allowlisted extensions.
+      - name: Sync published notes from the vault
+        run: ./scripts/sync-content.py --vault vault
+
       - uses: actions/setup-node@v6
         with:
           node-version: 24
@@ -39,9 +66,9 @@ jobs:
         run: npm ci
 
       # Layer 4 of the copyright guard: nothing document-shaped may ever be in
-      # the committed content. scripts/sync-content.py is the only writer of
-      # content/ and already refuses these extensions — this fails the build
-      # if that ever regresses.
+      # content/. scripts/sync-content.py is the only writer of content/ and
+      # already refuses these extensions — this fails the build if that ever
+      # regresses. Runs after the sync above, so it checks what CI produced.
       - name: Copyright gate — content/
         run: |
           set -euo pipefail
