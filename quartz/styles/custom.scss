@@ -22,7 +22,12 @@
   --text-highlight-bg: transparent !important;
 }
 
-a.internal {
+// The theme also ships an unlayered fallback (`body a.internal-link {
+// background-color: rgb(from var(--highlight) r g b / 0.3)`) which resolves to
+// 30% black once --text-highlight-bg above forces --highlight to transparent,
+// so this needs html body to out-specify it. Tag links keep their chips.
+html body a.internal:not(.tag-link),
+html body a.internal-link:not(.tag-link) {
   background-color: transparent;
   padding: 0;
   border-radius: 0;
@@ -95,6 +100,11 @@ body .note-properties .note-properties-tags .tag-link:hover {
   --graph-node-current: #8caaee; // frappé blue
   --graph-node-neighbor: #ca9ee6; // frappé mauve
   --graph-node-other: #737994; // frappé overlay0
+  --hero-accent: #ca9ee6; // frappé mauve — --tertiary is a duplicate of --secondary here
+}
+
+:root([saved-theme="dark"]) {
+  --hero-accent: rgb(var(--ctp-mauve)); // macchiato mauve
 }
 
 // ---------------------------------------------------------------------------
@@ -138,4 +148,227 @@ body .note-properties .note-properties-tags .tag-link:hover {
   > .results-container
   .result-card.focus {
   background-color: var(--lightgray) !important;
+}
+
+// ---------------------------------------------------------------------------
+// Listing pages (tags, folders) — note cards in a responsive grid
+// ---------------------------------------------------------------------------
+ul.section-ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding-left: 0;
+  margin-top: 1.5rem;
+}
+
+li.section-li {
+  margin: 0;
+
+  & > .section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--lightgray);
+    border-radius: 10px;
+    background: var(--light);
+    height: 100%;
+    transition:
+      border-color 0.2s ease,
+      transform 0.15s ease,
+      box-shadow 0.2s ease;
+
+    &:hover {
+      border-color: var(--tertiary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  .meta {
+    margin: 0;
+    font-size: 0.8em;
+    opacity: 0.6;
+    order: -1;
+  }
+
+  .desc h3 {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: auto;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+@media all and (max-width: 600px) {
+  ul.section-ul {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Tag index — tag headings flow as a pill cloud instead of stacking as
+// block headings (the a.tag-link pill itself is styled above)
+// ---------------------------------------------------------------------------
+h2:has(> a.tag-link) {
+  display: inline-block;
+  margin: 0.3rem 0.2rem;
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+// ---------------------------------------------------------------------------
+// Homepage hero — gradient title with a shimmering separator
+// ---------------------------------------------------------------------------
+body[data-slug="index"] {
+  article h1:first-of-type {
+    background: linear-gradient(
+      135deg,
+      var(--secondary) 0%,
+      var(--hero-accent, var(--tertiary)) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2.2rem;
+    margin-bottom: 0.3rem;
+  }
+
+  article h1:first-of-type::after {
+    content: "";
+    display: block;
+    height: 3px;
+    margin-top: 0.5rem;
+    border-radius: 2px;
+    background: linear-gradient(
+      90deg,
+      var(--secondary),
+      var(--hero-accent, var(--tertiary)),
+      var(--secondary)
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Homepage callouts — rounded corners and a hover lift (their coloured
+// identity borders are left alone)
+// ---------------------------------------------------------------------------
+body[data-slug="index"] .callout {
+  border-radius: 10px;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Recent notes on the homepage — section heading and card rows
+// ---------------------------------------------------------------------------
+body[data-slug="index"] .recent-notes {
+  margin-top: 1.5rem;
+
+  > h3 {
+    color: var(--secondary);
+    font-size: 1.1rem;
+    border-bottom: 2px solid var(--lightgray);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .recent-ul > li {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--lightgray);
+    border-radius: 8px;
+    margin-bottom: 0.6rem;
+    transition: border-color 0.2s ease;
+
+    &:hover {
+      border-color: var(--tertiary);
+    }
+
+    .section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .meta {
+      font-size: 0.8em;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reading polish — rules, images, code blocks
+// ---------------------------------------------------------------------------
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--lightgray) 20%,
+    var(--lightgray) 80%,
+    transparent
+  );
+  margin: 2rem 0;
+}
+
+article img {
+  border-radius: 6px;
+  border: 1px solid var(--lightgray);
+}
+
+pre {
+  border-top: 2px solid var(--tertiary);
+  border-radius: 0 0 6px 6px;
+}
+
+// ---------------------------------------------------------------------------
+// Explorer — bold folder titles, marked active page
+// ---------------------------------------------------------------------------
+.explorer {
+  .folder-title {
+    font-weight: 600;
+    color: var(--dark);
+  }
+
+  a.active {
+    color: var(--tertiary);
+    font-weight: 600;
+    border-left: 2px solid var(--tertiary);
+    padding-left: 0.4rem;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Wider content column on large screens
+// ---------------------------------------------------------------------------
+@media all and (min-width: 1400px) {
+  .center {
+    max-width: 850px;
+  }
 }
