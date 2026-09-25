@@ -173,7 +173,11 @@ plugins:
     layout:
       position: left
       priority: 50
-  - source: "@quartz-community/graph"
+  # Vendored copy of @quartz-community/graph (quartz/plugins/graph-local):
+  # identical code plus one change — node colors are read from --graph-node-*
+  # with the theme vars as fallback, so light mode can use Frappé tones without
+  # touching link/border colors site-wide.
+  - source: "./quartz/plugins/graph-local"
     enabled: true
     options:
       localGraph:

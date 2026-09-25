@@ -77,3 +77,22 @@ body .note-properties .note-properties-tags .tag-link:hover {
   border-color: var(--secondary);
   color: var(--light);
 }
+
+// ---------------------------------------------------------------------------
+// Graph nodes — Catppuccin Frappé in light mode
+//
+// The graph reads --graph-node-current / --graph-node-neighbor /
+// --graph-node-other from :root and falls back to --secondary / --tertiary /
+// --gray, so only these three are set, and only in light mode: dark mode keeps
+// the theme's Macchiato values untouched.
+//
+// Frappé on the light surface (#eff1f5): blue = the focused note, mauve = its
+// neighbours and tags, overlay0 = everything else — three distinct hues instead
+// of the two identical periwinkles --secondary/--tertiary gave us. Links,
+// borders and chips keep var(--secondary), so the rest of the site is unaffected.
+// ---------------------------------------------------------------------------
+:root:not([saved-theme="dark"]) {
+  --graph-node-current: #8caaee; // frappé blue
+  --graph-node-neighbor: #ca9ee6; // frappé mauve
+  --graph-node-other: #737994; // frappé overlay0
+}
