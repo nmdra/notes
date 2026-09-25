@@ -53,13 +53,17 @@ async function main() {
     return
   }
 
-  const specs = externalPlugins
-    .map((source: PluginSource) => parsePluginSource(source))
-    .filter((spec) => !spec.npmPackage)
+  const allSpecs = externalPlugins.map((source: PluginSource) => parsePluginSource(source))
 
-  const npmSpecs = externalPlugins
-    .map((source: PluginSource) => parsePluginSource(source))
-    .filter((spec) => spec.npmPackage)
+  const uniqueSpecsMap = new Map<string, (typeof allSpecs)[number]>()
+  for (const spec of allSpecs) {
+    if (!uniqueSpecsMap.has(spec.name)) {
+      uniqueSpecsMap.set(spec.name, spec)
+    }
+  }
+
+  const specs = [...uniqueSpecsMap.values()].filter((spec) => !spec.npmPackage)
+  const npmSpecs = [...uniqueSpecsMap.values()].filter((spec) => spec.npmPackage)
 
   if (specs.length === 0 && npmSpecs.length === 0) {
     console.log("No external plugins to install.")
