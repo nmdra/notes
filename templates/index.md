@@ -4,9 +4,9 @@ title: Nimendra's Notes
 
 # Hey 👋, I'm Nimendra
 
-- Browse the folders in the **explorer** on the left, or use **search** (Alt + `/`).
+- Browse the folders in the **explorer** on the left, or use **search**.
 - Longer-form writing lives on the **[blog](https://blog.nimendra.online/)**.
-- More about me on **[About](https://blog.nimendra.online/about)** · **[Resume](https://github.com/nmdra/Nimendra-CV/releases/latest/download/resume.pdf)**.
+- More about me on **[About](https://blog.nimendra.online/about)**.
 
 **Elsewhere:**
 
