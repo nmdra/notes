@@ -35,3 +35,45 @@ a.internal.broken,
 a.internal.broken:hover {
   opacity: 1;
 }
+
+// ---------------------------------------------------------------------------
+// Tags as chips
+//
+// Inline hashtags (`#LLM`) and the tag row in note properties render as
+// pills: soft surface, hairline border, accent text, filled on hover — the
+// chip anatomy from https://codefronts.com/snippets/css-tags-chips/. The `#`
+// base.scss puts on `.tag-link::before` is kept.
+//
+// Declared after the `a.internal` reset above (equal specificity, later wins),
+// and the note-properties selector is prefixed with `body` because that
+// component's CSS ships in component-*.css, which loads after this file.
+// ---------------------------------------------------------------------------
+a.tag-link,
+body .note-properties .note-properties-tags .tag-link {
+  display: inline-block;
+  padding: 0.05rem 0.6rem;
+  border: 1px solid var(--gray);
+  border-radius: 999px;
+  background: var(--lightgray);
+  color: var(--secondary);
+  font-size: 0.85em;
+  line-height: 1.7;
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+a.tag-link::before,
+body .note-properties .note-properties-tags .tag-link::before {
+  color: inherit;
+  opacity: 0.65;
+}
+
+a.tag-link:hover,
+body .note-properties .note-properties-tags .tag-link:hover {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  color: var(--light);
+}
