@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - v5
+
+  schedule:
+    # Monday + Thursday at 22:00 Sri Lanka time (16:30 UTC)
+    - cron: "30 16 * * 1,4"
+
   workflow_dispatch:
 
 permissions:
@@ -12,14 +17,17 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+
     steps:
-      - uses: actions/checkout@v6
+      - name: Check out Quartz
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0 # git info for note dates
 
@@ -31,12 +39,11 @@ jobs:
           REPO_KEY: ${{ secrets.REPO_KEY }}
         run: |
           if [ -z "$REPO_KEY" ]; then
-            echo "::error::REPO_KEY is not set on this repository — CI cannot read nmdra/Second-Brain"
+            echo "::error::REPO_KEY is not set — CI cannot read nmdra/Second-Brain"
             exit 1
           fi
-          echo "REPO_KEY present"
 
-      - name: Check out the vault
+      - name: Check out vault
         uses: actions/checkout@v6
         with:
           repository: nmdra/Second-Brain
@@ -47,40 +54,61 @@ jobs:
 
       # content/ is written here, not trusted from the push: sync-content.py
       # copies only what publish.list allows and only allowlisted extensions.
-      - name: Sync published notes from the vault
+      - name: Sync published notes
         run: ./scripts/sync-content.py --vault vault
 
-      - uses: actions/setup-node@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
         with:
           node-version: 24
+          cache: npm
 
-      - name: Cache dependencies
-        uses: actions/cache@v5
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm ci
+
+      # Local plugin sources (./quartz/plugins/*) resolve through
+      # .quartz/plugins symlinks that are gitignored; without this the build
+      # silently drops them (graph-local, link-notice). Same step as the
+      # package.json prebuild hook, which `npx quartz build` does not fire.
+      - name: Link local plugins
+        run: npm run install-plugins
 
       # Layer 4 of the copyright guard: nothing document-shaped may ever be in
       # content/. scripts/sync-content.py is the only writer of content/ and
       # already refuses these extensions — this fails the build if that ever
       # regresses. Runs after the sync above, so it checks what CI produced.
-      - name: Copyright gate — content/
+      - name: Check blocked files
         run: |
           set -euo pipefail
-          blocked='\(*.pdf\) -o \(*.epub\) -o \(*.docx\) -o \(*.pptx\) -o \(*.xlsx\) -o \(*.canvas\) -o \(*.base\)'
-          bad=$(find content -type f \( -iname '*.pdf' -o -iname '*.epub' -o -iname '*.docx' \
-                -o -iname '*.pptx' -o -iname '*.xlsx' -o -iname '*.canvas' -o -iname '*.base' \) || true)
-          if [ -n "$bad" ]; then
-            echo "::error::Blocked files found in content/ — these must never be published"
-            echo "$bad"
-            exit 1
-          fi
-          echo "content/ clean"
+
+          blocked_extensions=(
+            pdf
+            epub
+            docx
+            pptx
+            xlsx
+            canvas
+            base
+          )
+
+          check_directory() {
+            local directory="$1"
+            local bad=""
+
+            for ext in "${blocked_extensions[@]}"; do
+              bad+=$(find "$directory" -type f -iname "*.${ext}" -print)
+            done
+
+            if [ -n "$bad" ]; then
+              echo "::error::Blocked files found in $directory"
+              echo "$bad"
+              exit 1
+            fi
+
+            echo "$directory clean"
+          }
+
+          check_directory content
 
       - name: Build Quartz
         run: |
@@ -90,41 +118,90 @@ jobs:
       # Quartz exits 0 even when it globs nothing, so every gate below stays
       # green and an empty site ships. That has happened once (content/ was
       # git-ignored, and the globber honours .gitignore). Refuse it here.
-      - name: Empty-build gate
+      - name: Validate build
         run: |
           set -euo pipefail
+
           if grep -qE "Found 0 input files|Parsed 0 Markdown files" "$RUNNER_TEMP/build.log"; then
-            echo "::error::Quartz parsed no notes — refusing to deploy an empty site"
-            grep -E "Found|Parsed|Emitted" "$RUNNER_TEMP/build.log"
+            echo "::error::Quartz parsed no notes — refusing to deploy"
+            grep -E "Found|Parsed|Emitted" "$RUNNER_TEMP/build.log" || true
             exit 1
           fi
-          grep -E "Parsed [0-9]+ Markdown files" "$RUNNER_TEMP/build.log"
+
+          if ! grep -qE "Parsed [1-9][0-9]* Markdown files" "$RUNNER_TEMP/build.log"; then
+            echo "::error::Could not confirm that Quartz parsed Markdown files"
+            exit 1
+          fi
+
+          public_files=$(find public -type f | wc -l)
+
+          if [ "$public_files" -eq 0 ]; then
+            echo "::error::public/ is empty — refusing to deploy"
+            exit 1
+          fi
+
+          echo "Build validated: $public_files generated files"
+
+      # Local plugins load silently-but-fully when their .quartz symlinks are
+      # missing: the build stays green and the component just vanishes from
+      # the site. Probe the emitted bundle for both local plugins.
+      - name: Local-plugin gate
+        run: |
+          set -euo pipefail
+          if ! grep -rq "hasn't been published" public --include="*.js"; then
+            echo "::error::link-notice script missing from bundle — local plugin not loaded"
+            exit 1
+          fi
+          if ! grep -rq "Graph View" public --include="*.html"; then
+            echo "::error::graph component missing from pages — local plugin not loaded"
+            exit 1
+          fi
+          echo "local plugins present"
 
       # Same gate on the emitted site: catches anything a Quartz upgrade or a
       # config change might start copying despite ignorePatterns.
-      - name: Copyright gate — public/
+      - name: Check generated site
         run: |
           set -euo pipefail
-          bad=$(find public -type f \( -iname '*.pdf' -o -iname '*.epub' -o -iname '*.docx' \
-                -o -iname '*.pptx' -o -iname '*.xlsx' \) || true)
+
+          blocked_extensions=(
+            pdf
+            epub
+            docx
+            pptx
+            xlsx
+            canvas
+            base
+          )
+
+          bad=""
+
+          for ext in "${blocked_extensions[@]}"; do
+            bad+=$(find public -type f -iname "*.${ext}" -print)
+          done
+
           if [ -n "$bad" ]; then
-            echo "::error::Blocked files found in public/ — deployment aborted"
+            echo "::error::Blocked files found in public/"
             echo "$bad"
             exit 1
           fi
+
           echo "public/ clean"
 
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: public
 
   deploy:
     needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
