@@ -83,7 +83,22 @@ jobs:
           echo "content/ clean"
 
       - name: Build Quartz
-        run: npx quartz build
+        run: |
+          set -euo pipefail
+          npx quartz build 2>&1 | tee "$RUNNER_TEMP/build.log"
+
+      # Quartz exits 0 even when it globs nothing, so every gate below stays
+      # green and an empty site ships. That has happened once (content/ was
+      # git-ignored, and the globber honours .gitignore). Refuse it here.
+      - name: Empty-build gate
+        run: |
+          set -euo pipefail
+          if grep -qE "Found 0 input files|Parsed 0 Markdown files" "$RUNNER_TEMP/build.log"; then
+            echo "::error::Quartz parsed no notes — refusing to deploy an empty site"
+            grep -E "Found|Parsed|Emitted" "$RUNNER_TEMP/build.log"
+            exit 1
+          fi
+          grep -E "Parsed [0-9]+ Markdown files" "$RUNNER_TEMP/build.log"
 
       # Same gate on the emitted site: catches anything a Quartz upgrade or a
       # config change might start copying despite ignorePatterns.
