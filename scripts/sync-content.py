@@ -166,27 +166,43 @@ class Report:
         bucket[ref].add(by)
 
 
-def read_publish_list() -> list[str]:
+def read_publish_list() -> tuple[list[str], list[str]]:
+    """Parse publish.list into (includes, excludes).
+
+    A line is an include. A line prefixed with `!` is an exclude, which wins
+    over any include that covers it.
+    """
     if not PUBLISH_LIST.is_file():
         print(f"error: {PUBLISH_LIST} not found", file=sys.stderr)
         raise SystemExit(1)
-    entries: list[str] = []
+    includes: list[str] = []
+    excludes: list[str] = []
     for raw in PUBLISH_LIST.read_text(encoding="utf-8").splitlines():
         line = raw.strip()
         if not line or line.startswith("#"):
             continue
-        entry = line.lstrip("/").rstrip("/")
-        if entry in entries:
+        negated = line.startswith("!")
+        entry = line.lstrip("!").lstrip("/").rstrip("/")
+        if not entry:
             continue
-        entries.append(entry)
-    if not entries:
-        print("error: publish.list is empty", file=sys.stderr)
+        bucket = excludes if negated else includes
+        if entry in bucket:
+            continue
+        bucket.append(entry)
+    if not includes:
+        print("error: publish.list has no includes", file=sys.stderr)
         raise SystemExit(1)
-    return entries
+    return includes, excludes
 
 
-def in_publish_set(rel: str, entries: list[str]) -> bool:
-    return any(rel == e or rel.startswith(e + "/") for e in entries)
+def under(rel: str, root: str) -> bool:
+    return rel == root or rel.startswith(root + "/")
+
+
+def in_publish_set(rel: str, includes: list[str], excludes: list[str]) -> bool:
+    if any(under(rel, e) for e in excludes):
+        return False
+    return any(under(rel, e) for e in includes)
 
 
 def ext_of(rel: str) -> str:
@@ -281,7 +297,7 @@ def main() -> int:
         print("       set VAULT_PATH or pass --vault", file=sys.stderr)
         return 1
 
-    entries = read_publish_list()
+    includes, excludes = read_publish_list()
     vault = Vault(vault_path)
     report = Report()
 
@@ -298,14 +314,16 @@ def main() -> int:
 
     # 1. copy the allowlisted folders (notes + locally stored allowed assets)
     note_files: list[str] = []
-    for entry in entries:
-        matches = [f for f in all_files if f == entry or f.startswith(entry + "/")]
+    for entry in includes:
+        matches = [f for f in all_files if under(f, entry)]
         if not matches:
             print(f"error: publish entry not found in vault: {entry}", file=sys.stderr)
             return 1
         for rel in matches:
             parts = rel.split("/")
             if any(p.startswith(".") for p in parts[:-1]):
+                continue
+            if any(under(rel, e) for e in excludes):
                 continue
             ext = ext_of(rel)
             if ext == NOTE_EXT:
@@ -332,7 +350,7 @@ def main() -> int:
                 target = resolve(ref, index, rel)
                 if target is None:
                     report.add(report.unresolved, ref, rel)
-                elif not in_publish_set(target, entries):
+                elif not in_publish_set(target, includes, excludes):
                     report.add(report.outside, target, rel)
                 elif target not in note_files and ext == NOTE_EXT:
                     if not copy_into_content(vault, target):
@@ -352,14 +370,16 @@ def main() -> int:
             elif next_ext in SKIP_EXT:
                 report.add(report.skipped, target, rel)
             elif next_ext in ASSET_ALLOW:
-                if not (CONTENT / target).exists():
+                if any(under(target, e) for e in excludes):
+                    report.add(report.outside, target, rel)
+                elif not (CONTENT / target).exists():
                     if copy_into_content(vault, target):
                         report.assets += 1
                         report.asset_bytes += (CONTENT / target).stat().st_size
                     else:
                         report.add(report.unresolved, ref, rel)
             elif next_ext == NOTE_EXT:
-                if not in_publish_set(target, entries):
+                if not in_publish_set(target, includes, excludes):
                     report.add(report.outside, target, rel)
                 elif not (CONTENT / target).exists():
                     if copy_into_content(vault, target):
@@ -375,19 +395,25 @@ def main() -> int:
         print(f"warning: {HOME_PAGE} missing, no homepage written", file=sys.stderr)
 
     if not args.quiet:
-        print_report(report, entries, vault)
+        print_report(report, includes, excludes, vault)
     return 0
 
 
-def print_report(r: Report, entries: list[str], vault: Vault) -> None:
+def print_report(
+    r: Report, includes: list[str], excludes: list[str], vault: Vault
+) -> None:
     print()
     print("sync report")
     print(
         f"  mode:              {'git (sparse clone)' if vault.use_git else 'worktree'}"
     )
-    print(f"  publish entries:   {len(entries)}")
-    for e in entries:
+    print(f"  publish entries:   {len(includes)}")
+    for e in includes:
         print(f"    - {e}")
+    if excludes:
+        print(f"  excluded entries:  {len(excludes)}")
+        for e in excludes:
+            print(f"    ! {e}")
     print(f"  notes copied:      {r.notes}")
     print(f"  assets copied:     {r.assets} ({r.asset_bytes / 1024 / 1024:.1f} MB)")
     print(f"  BLOCKED documents: {len(r.blocked)}  <- never published")
