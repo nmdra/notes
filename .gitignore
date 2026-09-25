@@ -19,3 +19,6 @@ quartz/cli/tui/dist/
 # run and the CI run are gated on document-shaped files.
 # Run ./scripts/sync-content.py before `npx quartz build` to refresh it.
 content/
+
+# playwright-cli session output (snapshots, screenshots)
+.playwright-cli/
