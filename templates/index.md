@@ -14,10 +14,6 @@ Welcome to my digital garden 🪴. These are my working notes on cloud infrastru
     <strong>AI &amp; LLMs</strong>
     <span>Agents, language models, and practical AI systems.</span>
   </a>
-  <a class="home-topic" href="/02.areas/devops/docker/">
-    <strong>Docker &amp; containers</strong>
-    <span>Images, runtimes, networking, and deployment.</span>
-  </a>
   <a class="home-topic" href="/02.areas/devops/cac--and--iac/">
     <strong>Infrastructure as code</strong>
     <span>Provisioning and configuration management.</span>
@@ -25,6 +21,10 @@ Welcome to my digital garden 🪴. These are my working notes on cloud infrastru
   <a class="home-topic" href="/02.areas/kubernetes/k8s-primer/">
     <strong>Kubernetes</strong>
     <span>Cluster concepts and hands-on learning.</span>
+  </a>
+  <a class="home-topic" href="/2.Areas/Platform Engineering">
+    <strong>Platform Engineering</strong>
+    <span>Platform Engineering concepts and tools</span>
   </a>
   <a class="home-topic" href="/02.areas/software-engineering/go-notes/">
     <strong>Go &amp; software engineering</strong>

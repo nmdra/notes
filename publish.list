@@ -11,8 +11,9 @@
 02.Areas/Software Engineering/gRPC
 02.Areas/Software Engineering/Go Notes/Learning Go
 02.Areas/Kubernetes/K8s-Primer
-02.Areas/Platform Engineering/OpenChoreo
+02.Areas/Platform Engineering
 02.Areas/DevOps/CaC & IaC
 05.Books
 
 # kept private
+!02.Areas/Platform Engineering/Effective Platform Engineering
