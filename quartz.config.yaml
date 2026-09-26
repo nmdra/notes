@@ -1,25 +1,24 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
 configuration:
-  pageTitle: "Nimendra's Notes"
-  pageTitleSuffix: ""
+  pageTitle: "Nimendra's Notes 🪴"
+  pageTitleSuffix: ''
   enableSPA: true
   enablePopovers: true
   analytics:
     provider: cloudflare
-    token: "c7937bce6561481c95ff404672ac6f03"
+    token: c7937bce6561481c95ff404672ac6f03
   locale: en-US
   baseUrl: notes.nimendra.online
   ignorePatterns:
-    - private
-    - templates
-    - .obsidian
-    # copyright safety: these must never reach the build output
-    - "**/*.pdf"
-    - "**/*.epub"
-    - "**/*.docx"
-    - "**/*.pptx"
-    - "**/*.xlsx"
-    - "**/.gitkeep"
+  - private
+  - templates
+  - .obsidian
+  - '**/*.pdf'
+  - '**/*.epub'
+  - '**/*.docx'
+  - '**/*.pptx'
+  - '**/*.xlsx'
+  - '**/.gitkeep'
   theme:
     fontOrigin: googleFonts
     cdnCaching: true
@@ -29,331 +28,316 @@ configuration:
       code: IBM Plex Mono
     colors:
       lightMode:
-        light: "#faf8f8"
-        lightgray: "#e5e5e5"
-        gray: "#b8b8b8"
-        darkgray: "#4e4e4e"
-        dark: "#2b2b2b"
-        secondary: "#284b63"
-        tertiary: "#84a59d"
-        highlight: rgba(143, 159, 169, 0.15)
-        textHighlight: "#00000000"
+        light: '#eff1f5'
+        lightgray: '#ccd0da'
+        gray: '#acb0be'
+        darkgray: '#6c6f85'
+        dark: '#4c4f69'
+        secondary: '#1e66f5'
+        tertiary: '#8839ef'
+        highlight: rgba(30, 102, 245, 0.15)
+        textHighlight: '#00000000'
       darkMode:
-        light: "#161618"
-        lightgray: "#393639"
-        gray: "#646464"
-        darkgray: "#d4d4d4"
-        dark: "#ebebec"
-        secondary: "#7b97aa"
-        tertiary: "#84a59d"
-        highlight: rgba(143, 159, 169, 0.15)
-        textHighlight: "#00000000"
+        light: '#1e1e2e'
+        lightgray: '#313244'
+        gray: '#6c7086'
+        darkgray: '#a6adc8'
+        dark: '#cdd6f4'
+        secondary: '#89b4fa'
+        tertiary: '#cba6f7'
+        highlight: rgba(137, 180, 250, 0.15)
+        textHighlight: '#00000000'
 plugins:
-  - source: "@quartz-community/created-modified-date"
-    enabled: true
-    options:
-      defaultDateType: modified
-      priority:
-        - frontmatter
-        - git
-        - filesystem
-    order: 10
-  - source: "@quartz-community/syntax-highlighting"
-    enabled: true
-    options:
-      theme:
-        light: github-light
-        dark: github-dark
-      keepBackground: false
-    order: 20
-  - source: "@quartz-community/obsidian-flavored-markdown"
-    enabled: true
-    options:
-      comments: true
-      highlight: true
-      wikilinks: true
-      callouts: true
-      mermaid: true
-      parseTags: true
-      parseArrows: true
-      parseBlockReferences: true
-      enableInHtmlEmbed: false
-      enableYouTubeEmbed: true
-      enableVideoEmbed: true
-      enableCheckbox: true
-    order: 30
-  - source: "@quartz-community/github-flavored-markdown"
-    enabled: true
-    order: 40
-  - source: "@quartz-community/table-of-contents"
-    enabled: true
-    order: 50
-    layout:
-      position: right
-      priority: 10
-  - source: "@quartz-community/crawl-links"
-    enabled: true
-    options:
-      markdownLinkResolution: shortest
-      # unresolved links (unpublished folders, blocked PDFs, skipped canvases)
-      # keep a `broken` class as a hook, but are shown like any other link —
-      # styling them was tried and read as noise, see quartz/styles/custom.scss
-      disableBrokenWikilinks: true
-    order: 60
-  - source: "@quartz-community/description"
-    enabled: true
-    order: 70
-  - source: "@quartz-community/latex"
-    enabled: true
-    options:
-      renderEngine: katex
-    order: 80
-  - source: "@quartz-community/citations"
-    enabled: false
-    order: 85
-  - source: "@quartz-community/hard-line-breaks"
-    enabled: true
-    order: 90
-  - source: "@quartz-community/ox-hugo"
-    enabled: false
-    order: 91
-  - source: "@quartz-community/roam"
-    enabled: false
-    order: 92
-  - source: "@quartz-community/quartz-fonts"
-    enabled: true
-  - source: "@quartz-themes/core"
-    enabled: true
-    options:
-      theme: catppuccin
-      variation: macchiato
-      mode: both
-  - source: "@quartz-community/remove-draft"
-    enabled: true
-  - source: "@quartz-community/explicit-publish"
-    enabled: false
-  - source: "@quartz-community/unlisted-pages"
-    enabled: true
-    options: {}
-    order: 45
-  - source: "@quartz-community/encrypted-pages"
-    enabled: true
-    options:
-      iterations: 600000
-      passwordField: password
-      unlistWhenEncrypted: false
-      outputPath: static/encryptedContentIndex.json
-  - source: "@quartz-community/stacked-pages"
-    enabled: false
-    layout:
-      position: afterBody
-      priority: 50
-      display: all
-  - source: "@quartz-community/alias-redirects"
-    enabled: true
-  - source: "@quartz-community/content-index"
-    enabled: true
-    options:
-      enableSiteMap: true
-      enableRSS: true
-  - source: "@quartz-community/favicon"
-    enabled: true
-  - source: "@quartz-community/og-image"
-    enabled: true
-  - source: "@quartz-community/cname"
-    enabled: true
-  - source: "@quartz-community/canvas-page"
-    enabled: false
-  - source: "@quartz-community/content-page"
-    enabled: true
-  - source: "@quartz-community/folder-page"
-    enabled: true
-  - source: "@quartz-community/tag-page"
-    enabled: true
-  - source: "@quartz-community/explorer"
-    enabled: true
-    options:
-      title: Explorer
-      # chevron collapses; folder name navigates to the folder's index page
-      folderClickBehavior: link
-      # folders start collapsed, except the branch of the current page;
-      # expansion state is persisted in localStorage
-      folderDefaultState: collapsed
-      useSavedState: true
-    layout:
-      position: left
-      priority: 50
-  # Vendored copy of @quartz-community/graph (quartz/plugins/graph-local):
-  # identical code plus one change — node colors are read from --graph-node-*
-  # with the theme vars as fallback, so light mode can use Frappé tones without
-  # touching link/border colors site-wide.
-  - source: "@quartz-community/graph"
-    enabled: true
-    options:
-      localGraph:
-        drag: true
-        zoom: true
-        depth: 1
-        scale: 1.1
-        repelForce: 0.52
-        centerForce: 0.3
-        linkDistance: 32
-        fontSize: 0.65
-        opacityScale: 1
-        removeTags: []
-        showTags: false
-        enableRadial: false
-      globalGraph:
-        drag: true
-        zoom: true
-        depth: -1
-        scale: 0.9
-        repelForce: 0.52
-        centerForce: 0.3
-        linkDistance: 32
-        fontSize: 0.65
-        opacityScale: 1
-        removeTags: []
-        showTags: false
-        focusOnHover: true
-        enableRadial: true
-    layout:
-      position: right
-      priority: 50
-  - source: "@quartz-community/search"
-    enabled: true
-    options:
-      # full text: title, body text and tags are all indexed; the preview
-      # excerpt under each hit comes from the body.
-      enablePreview: true
-      fieldPriority:
-        - title
-        - content
-        - tags
-    layout:
-      position: left
-      priority: 20
-      group: toolbar
-      groupOptions:
-        grow: true
-  - source: "@quartz-community/backlinks"
-    enabled: true
-    layout:
-      position: right
-      priority: 30
-  - source: "@quartz-community/article-title"
-    enabled: true
-    layout:
-      position: beforeBody
-      priority: 10
-  - source: "@quartz-community/content-meta"
-    enabled: true
-    layout:
-      position: beforeBody
-      priority: 20
-  # off: notes already show inline tags twice (content-meta + body)
-  - source: "@quartz-community/tag-list"
-    enabled: false
-    layout:
-      position: beforeBody
-      priority: 30
-  - source: "@quartz-community/page-title"
-    enabled: true
-    layout:
-      position: left
-      priority: 10
-  - source: "@quartz-community/darkmode"
-    enabled: true
-    layout:
-      position: left
-      priority: 30
-      group: toolbar
-  - source: "@quartz-community/reader-mode"
-    enabled: true
-    layout:
-      position: left
-      priority: 35
-      group: toolbar
-  - source: "@quartz-community/breadcrumbs"
-    enabled: true
-    layout:
-      position: beforeBody
-      priority: 5
-      condition: not-index
-  - source: "@quartz-community/comments"
-    enabled: false
-    options:
-      provider: giscus
-      options: {}
-    layout:
-      position: afterBody
-      priority: 10
-  - source: "@quartz-community/footer"
-    enabled: true
-    options:
-      links:
-        Blog: https://blog.nimendra.online/
-        GitHub: https://github.com/nmdra
-        X(Twitter): https://x.com/nimendra_
-    layout:
-      position: footer
-      priority: 50
-  - source: "@quartz-community/recent-notes"
-    enabled: true
-    options:
-      title: "📝 Recently Updated"
-      limit: 5
+- source: '@quartz-community/created-modified-date'
+  enabled: true
+  options:
+    defaultDateType: modified
+    priority:
+    - frontmatter
+    - git
+    - filesystem
+  order: 10
+- source: '@quartz-community/syntax-highlighting'
+  enabled: true
+  options:
+    theme:
+      light: github-light
+      dark: github-dark
+    keepBackground: false
+  order: 20
+- source: '@quartz-community/obsidian-flavored-markdown'
+  enabled: true
+  options:
+    comments: true
+    highlight: true
+    wikilinks: true
+    callouts: true
+    mermaid: true
+    parseTags: true
+    parseArrows: true
+    parseBlockReferences: true
+    enableInHtmlEmbed: false
+    enableYouTubeEmbed: true
+    enableVideoEmbed: true
+    enableCheckbox: true
+  order: 30
+- source: '@quartz-community/github-flavored-markdown'
+  enabled: true
+  order: 40
+- source: '@quartz-community/table-of-contents'
+  enabled: true
+  order: 50
+  layout:
+    position: right
+    priority: 10
+- source: '@quartz-community/crawl-links'
+  enabled: true
+  options:
+    markdownLinkResolution: shortest
+    disableBrokenWikilinks: true
+  order: 60
+- source: '@quartz-community/description'
+  enabled: true
+  order: 70
+- source: '@quartz-community/latex'
+  enabled: true
+  options:
+    renderEngine: katex
+  order: 80
+- source: '@quartz-community/citations'
+  enabled: false
+  order: 85
+- source: '@quartz-community/hard-line-breaks'
+  enabled: true
+  order: 90
+- source: '@quartz-community/ox-hugo'
+  enabled: false
+  order: 91
+- source: '@quartz-community/roam'
+  enabled: false
+  order: 92
+- source: '@quartz-community/quartz-fonts'
+  enabled: true
+- source: '@quartz-themes/core'
+  enabled: false
+  options:
+    theme: catppuccin
+    variation: macchiato
+    mode: both
+- source: '@quartz-community/remove-draft'
+  enabled: true
+- source: '@quartz-community/explicit-publish'
+  enabled: false
+- source: '@quartz-community/unlisted-pages'
+  enabled: true
+  options: {}
+  order: 45
+- source: '@quartz-community/encrypted-pages'
+  enabled: true
+  options:
+    iterations: 600000
+    passwordField: password
+    unlistWhenEncrypted: false
+    outputPath: static/encryptedContentIndex.json
+- source: '@quartz-community/stacked-pages'
+  enabled: false
+  layout:
+    position: afterBody
+    priority: 50
+    display: all
+- source: '@quartz-community/alias-redirects'
+  enabled: true
+- source: '@quartz-community/content-index'
+  enabled: true
+  options:
+    enableSiteMap: true
+    enableRSS: true
+- source: '@quartz-community/favicon'
+  enabled: true
+- source: '@quartz-community/og-image'
+  enabled: true
+- source: '@quartz-community/cname'
+  enabled: true
+- source: '@quartz-community/canvas-page'
+  enabled: false
+- source: '@quartz-community/content-page'
+  enabled: true
+- source: '@quartz-community/folder-page'
+  enabled: true
+- source: '@quartz-community/tag-page'
+  enabled: true
+- source: '@quartz-community/explorer'
+  enabled: true
+  options:
+    title: Explorer
+    folderClickBehavior: link
+    folderDefaultState: collapsed
+    useSavedState: true
+  layout:
+    position: left
+    priority: 50
+- source: '@quartz-community/graph'
+  enabled: true
+  options:
+    localGraph:
+      drag: true
+      zoom: true
+      depth: 1
+      scale: 1.1
+      repelForce: 0.52
+      centerForce: 0.3
+      linkDistance: 32
+      fontSize: 0.65
+      opacityScale: 1
+      removeTags: []
       showTags: false
-      hideTagPages: true
-      hideFolderPages: true
-      linkToMore: false
-    layout:
-      position: afterBody
-      priority: 10
-      condition: is-index
-  # intercepts clicks on broken wikilinks and blocked documents (PDFs etc.)
-  # and shows a toast instead of navigating to a 404
-  - source: "./quartz/plugins/link-notice"
-    enabled: true
-    layout:
-      position: afterBody
-      priority: 100
-  - source: "@quartz-community/spacer"
-    enabled: true
+      enableRadial: false
+    globalGraph:
+      drag: true
+      zoom: true
+      depth: -1
+      scale: 0.9
+      repelForce: 0.52
+      centerForce: 0.3
+      linkDistance: 32
+      fontSize: 0.65
+      opacityScale: 1
+      removeTags: []
+      showTags: false
+      focusOnHover: true
+      enableRadial: true
+  layout:
+    position: right
+    priority: 50
+- source: '@quartz-community/search'
+  enabled: true
+  options:
+    enablePreview: true
+    fieldPriority:
+    - title
+    - content
+    - tags
+  layout:
+    position: left
+    priority: 20
+    group: toolbar
+    groupOptions:
+      grow: true
+- source: '@quartz-community/backlinks'
+  enabled: true
+  layout:
+    position: right
+    priority: 30
+- source: '@quartz-community/article-title'
+  enabled: true
+  layout:
+    position: beforeBody
+    priority: 10
+- source: '@quartz-community/content-meta'
+  enabled: true
+  layout:
+    position: beforeBody
+    priority: 20
+- source: '@quartz-community/tag-list'
+  enabled: false
+  layout:
+    position: beforeBody
+    priority: 30
+- source: '@quartz-community/page-title'
+  enabled: true
+  layout:
+    position: left
+    priority: 10
+- source: '@quartz-community/darkmode'
+  enabled: true
+  layout:
+    position: left
+    priority: 30
+    group: toolbar
+- source: '@quartz-community/reader-mode'
+  enabled: true
+  layout:
+    position: left
+    priority: 35
+    group: toolbar
+- source: '@quartz-community/breadcrumbs'
+  enabled: true
+  layout:
+    position: beforeBody
+    priority: 5
+    condition: not-index
+- source: '@quartz-community/comments'
+  enabled: false
+  options:
+    provider: giscus
     options: {}
-    order: 25
-    layout:
-      position: left
-      priority: 25
-      display: mobile-only
-  - source: "@quartz-community/bases-page"
-    enabled: false
-    options: {}
-    order: 50
-  - source: "@quartz-community/note-properties"
-    enabled: true
-    options:
-      includeAll: false
-      includedProperties:
-        - description
-        - tags
-        - aliases
-      excludedProperties: []
-      hidePropertiesView: false
-      delimiters: ---
-      language: yaml
-    order: 5
-    layout:
-      position: beforeBody
-      priority: 15
-      display: all
-  - source: "@quartz-community/obsidian-plugin-excalidraw"
-    enabled: false
-    options:
-      enableInteraction: true
-      darkMode: auto
-      exportPadding: 20
-    order: 50
+  layout:
+    position: afterBody
+    priority: 10
+- source: '@quartz-community/footer'
+  enabled: true
+  options:
+    links:
+      Blog: https://blog.nimendra.online/
+      GitHub: https://github.com/nmdra
+      X(Twitter): https://x.com/nimendra_
+  layout:
+    position: footer
+    priority: 50
+- source: '@quartz-community/recent-notes'
+  enabled: true
+  options:
+    title: "\U0001F4DD Recently Updated"
+    limit: 5
+    showTags: false
+    hideTagPages: true
+    hideFolderPages: true
+    linkToMore: false
+  layout:
+    position: afterBody
+    priority: 10
+    condition: is-index
+- source: ./quartz/plugins/link-notice
+  enabled: true
+  layout:
+    position: afterBody
+    priority: 100
+- source: '@quartz-community/spacer'
+  enabled: true
+  options: {}
+  order: 25
+  layout:
+    position: left
+    priority: 25
+    display: mobile-only
+- source: '@quartz-community/bases-page'
+  enabled: false
+  options: {}
+  order: 50
+- source: '@quartz-community/note-properties'
+  enabled: true
+  options:
+    includeAll: false
+    includedProperties:
+    - description
+    - tags
+    - aliases
+    excludedProperties: []
+    hidePropertiesView: false
+    delimiters: '---'
+    language: yaml
+  order: 5
+  layout:
+    position: beforeBody
+    priority: 15
+    display: all
+- source: '@quartz-community/obsidian-plugin-excalidraw'
+  enabled: false
+  options:
+    enableInteraction: true
+    darkMode: auto
+    exportPadding: 20
+  order: 50
 layout:
   groups:
     toolbar:
@@ -361,7 +345,7 @@ layout:
       direction: row
       gap: 0.5rem
   byPageType:
-    "404":
+    '404':
       positions:
         beforeBody: []
         left: []
@@ -369,12 +353,12 @@ layout:
     content: {}
     folder:
       exclude:
-        - reader-mode
+      - reader-mode
       positions:
         right: []
     tag:
       exclude:
-        - reader-mode
+      - reader-mode
       positions:
         right: []
     canvas: {}

@@ -1,0 +1,27 @@
+@mixin callout-colors($color-rgb-var) {
+  --color: rgb(var(#{$color-rgb-var}));
+  --border: rgba(var(#{$color-rgb-var}), 0.25);
+  --bg: rgba(var(#{$color-rgb-var}), 0.1);
+}
+
+.callout {
+  &[data-callout] { @include callout-colors('--ctp-mocha-blue-rgb'); }
+  &[data-callout="abstract"] { @include callout-colors('--ctp-mocha-sapphire-rgb'); }
+  &[data-callout="info"], &[data-callout="todo"] { @include callout-colors('--ctp-mocha-teal-rgb'); }
+  &[data-callout="tip"], &[data-callout="success"] { @include callout-colors('--ctp-mocha-green-rgb'); }
+  &[data-callout="question"] { @include callout-colors('--ctp-mocha-peach-rgb'); }
+  &[data-callout="warning"] { @include callout-colors('--ctp-mocha-yellow-rgb'); }
+  &[data-callout="failure"], &[data-callout="danger"], &[data-callout="bug"] { @include callout-colors('--ctp-mocha-red-rgb'); }
+  &[data-callout="example"] { @include callout-colors('--ctp-mocha-mauve-rgb'); }
+}
+
+:root:not([saved-theme="dark"]) .callout {
+  &[data-callout] { @include callout-colors('--ctp-latte-blue-rgb'); }
+  &[data-callout="abstract"] { @include callout-colors('--ctp-latte-sapphire-rgb'); }
+  &[data-callout="info"], &[data-callout="todo"] { @include callout-colors('--ctp-latte-teal-rgb'); }
+  &[data-callout="tip"], &[data-callout="success"] { @include callout-colors('--ctp-latte-green-rgb'); }
+  &[data-callout="question"] { @include callout-colors('--ctp-latte-peach-rgb'); }
+  &[data-callout="warning"] { @include callout-colors('--ctp-latte-yellow-rgb'); }
+  &[data-callout="failure"], &[data-callout="danger"], &[data-callout="bug"] { @include callout-colors('--ctp-latte-red-rgb'); }
+  &[data-callout="example"] { @include callout-colors('--ctp-latte-mauve-rgb'); }
+}

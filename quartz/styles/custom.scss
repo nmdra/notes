@@ -1,4 +1,6 @@
 @use "./variables.scss" as *;
+@use "./catppuccin.scss";
+@use "./callouts_catppuccin.scss";
 
 // put your custom CSS here!
 
@@ -33,12 +35,27 @@ html body a.internal-link:not(.tag-link) {
   border-radius: 0;
 }
 
-// Links whose target is not published keep working as links; they are simply
-// not dimmed. Quartz marks them with the `broken` class (disableBrokenWikilinks
-// in quartz.config.yaml) and dims them to 50% opacity in base.scss.
+// Links whose target is not published are styled as disabled/dimmed text using
+// Catppuccin overlay colors and marked with a red warning suffix.
 a.internal.broken,
 a.internal.broken:hover {
-  opacity: 1;
+  opacity: 1; /* override base.scss 50% opacity */
+  color: var(--ctp-mocha-overlay0) !important;
+  text-decoration: none;
+}
+a.internal.broken:not(.tag-link)::after {
+  content: " (not published)";
+  color: var(--ctp-mocha-red);
+  font-size: 0.85em;
+  margin-left: 0.2rem;
+}
+
+:root:not([saved-theme="dark"]) a.internal.broken,
+:root:not([saved-theme="dark"]) a.internal.broken:hover {
+  color: var(--ctp-latte-overlay0) !important;
+}
+:root:not([saved-theme="dark"]) a.internal.broken:not(.tag-link)::after {
+  color: var(--ctp-latte-red);
 }
 
 // ---------------------------------------------------------------------------

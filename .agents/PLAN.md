@@ -11,6 +11,7 @@ Created: 2026-09-25
 | Canvases/bases | skipped (the 1 `.canvas` embed in AI-LLM will show as a broken link)                               |
 | PDFs / docs    | never published — 4 layers below; links left in place and marked broken                            |
 | Images         | allowed (image extensions in the copy allowlist; no path exclusions needed)                        |
+| Theme          | **Catppuccin** (Latte for light, Mocha for dark) applied to `quartz.config.ts` and `custom.scss`   |
 | Repo / URL     | `nmdra/notes` (created via `gh`) → `notes.nimendra.online`; DNS CNAME added by user                |
 | Vault          | `~/Documents/Second Brain 2.0` stays private and untouched; CI reads it via a read-only deploy key |
 | Blog           | `nmdra.github.io` / `blog.nimendra.online` — never touched                                         |
@@ -24,7 +25,7 @@ Created: 2026-09-25
   This is the official lever to keep PDFs out of the build output.
 - Attachments live in `99.Storage-Shed/Attachments` (214 MB; 76 of the vault's 87 PDFs).
 - Blocked-PDF references inside the publish set: AI-LLM 15, 03.Resources 7, 02.Areas 2 = 24.
-- Custom CSS goes in `quartz/styles/custom.scss`.
+- Custom CSS goes in `quartz/styles/custom.scss`. It should import the Catppuccin CSS palette (`@import url('https://cdn.jsdelivr.net/npm/@catppuccin/palette/css/catppuccin.css');`) or use the npm package to style elements following the Catppuccin style guide (e.g., using `overlay` variables for dimmed elements).
 - Obsidian template sets `markdownLinkResolution: shortest` (matches the vault).
 
 ## Repo layout (in `~/Documents/Projects/obsidian-publish`)
@@ -58,14 +59,14 @@ quartz/styles/custom.scss   # dimming for broken links
    resolve them against the vault, copy only allowlisted referenced assets preserving
    vault-relative paths so `shortest` link resolution keeps working; copy `templates/index.md` →
    `content/index.md`; print report: notes, assets, blocked-doc refs, unresolved refs.
-3. **Config** — `baseUrl: notes.nimendra.online`; `ignorePatterns: ["**/*.pdf", "**/*.epub",
+3. **Config & Theme** — `baseUrl: notes.nimendra.online`; `ignorePatterns: ["**/*.pdf", "**/*.epub",
 "**/*.docx"]`; CrawlLinks `disableBrokenWikilinks: true`; add `CNAME` plugin; keep
-   `RemoveDrafts`.
+   `RemoveDrafts`. Configure Catppuccin colors (Latte/Mocha) in `quartz.config.ts` theme section.
 4. **Copyright layers**
    - L1 sync extension allowlist — PDF never enters `content/`
    - L2 `ignorePatterns` — Assets emitter skips it even if present
    - L3 mark broken — `disableBrokenWikilinks` + CSS in `custom.scss` dimming
-     `a.internal.broken` and appending "not published" via `::after`
+     `a.internal.broken` using Catppuccin variables (e.g., `var(--ctp-mocha-overlay0)`) and appending "not published" via `::after` (with an accent color like `var(--ctp-mocha-red)`).
    - L4 CI gate — workflow fails the deploy if `find public -iname '*.pdf'` returns anything
 5. **Secret** — `ssh-keygen -t ed25519` → public half registered as a read-only deploy key on
    `nmdra/Second-Brain`, private half as Actions secret `VAULT_DEPLOY_KEY` on `nmdra/notes`.

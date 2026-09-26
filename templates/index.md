@@ -1,12 +1,30 @@
 ---
-title: Nimendra's Notes
+title: Nimendra's Notes 🪴
 ---
 
-# Hey 👋, I'm Nimendra
+**To:** Explorers & Builders
+**From:** Nimendra
 
-Welcome to my working notes on **Cloud & DevOps**, **Systems**, and **AI/LLM** — published straight from my Obsidian vault.
+Welcome to my digital garden 🪴. This is a living collection of my working notes about various topics—especially Cloud, DevOps, System Design, and AI—growing steadily from seeds of thought to evergreen knowledge, published straight from my Obsidian vault.
 
-> [!tip] Navigation tips
+**Feel free to explore the vault!**
+
+**Explore more**
+
+- **[Read my blog](https://blog.nimendra.online/)** — longer-form writing and essays
+- **[Learn more about me](https://blog.nimendra.online/about)** — a little more about who I am
+
+**Find me elsewhere**
+
+[View my GitHub](https://github.com/nmdra) · [Connect on LinkedIn](https://www.linkedin.com/in/nimendra/) · [Follow me on X](https://x.com/nimendra_) · [Find me on Bluesky](https://bsky.app/profile/nimendra.xyz) · [Send me an email](mailto:nimendraonline@gmail.com)
+
+> [!quote]
+> “Creativity is just connecting things. When you ask creative people how they did something, they feel a little guilty because they didn’t really do it, they just saw something.” (Steve Jobs)
+> ― Sönke Ahrens, How to Take Smart Notes
+
+---
+
+> [!tip] Wandering the garden
 >
 > - **Search** — press `Alt + /` or click the search icon
 > - **Hover** any wikilink for a preview popup
@@ -15,7 +33,7 @@ Welcome to my working notes on **Cloud & DevOps**, **Systems**, and **AI/LLM** �
 
 ---
 
-## 📚 What's Inside
+## 🌿 What's Growing Here
 
 > [!abstract] Cloud & DevOps
 > Containers, Linux internals, container runtimes, networking, and security.
@@ -38,15 +56,6 @@ Welcome to my working notes on **Cloud & DevOps**, **Systems**, and **AI/LLM** �
 > → [[Prefix vs KV vs Prompt Caching]] · [[LLM quantization]] · [[Mixture of Experts (MoE)]]
 
 ---
-
-**Explore more**
-
-- **[Read my blog](https://blog.nimendra.online/)** — longer-form writing and essays
-- **[Learn more about me](https://blog.nimendra.online/about)** — a little more about who I am
-
-**Find me elsewhere**
-
-[View my GitHub](https://github.com/nmdra) · [Connect on LinkedIn](https://www.linkedin.com/in/nimendra/) · [Follow me on X](https://x.com/nimendra_) · [Find me on Bluesky](https://bsky.app/profile/nimendra.xyz) · [Send me an email](mailto:nimendraonline@gmail.com)
 
 > [!warning]- About broken links
 > Some notes and linked documents haven't been published yet, so their links may return a 404 or notice. They'll become available as more notes are published.
