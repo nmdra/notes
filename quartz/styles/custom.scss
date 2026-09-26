@@ -101,12 +101,12 @@ body .note-properties .note-properties-tags .tag-link:hover {
   --graph-node-neighbor: #ca9ee6; // frappé mauve
   --graph-node-other: #737994; // frappé overlay0
   --hero-accent: #ca9ee6; // frappé mauve — --tertiary is a duplicate of --secondary here
-  --graph-link: #9ca0b0; // frappé overlay0/surface2 for crisp link lines
+  --graph-link: #b5bfe2; // frappé subtle surface tone for balanced link lines
 }
 
 :root[saved-theme="dark"] {
   --hero-accent: rgb(var(--ctp-mauve)); // macchiato mauve
-  --graph-link: #6e738d; // macchiato overlay0/surface2 for crisp link lines
+  --graph-link: #545872; // macchiato subtle surface tone for balanced link lines
 }
 
 // ---------------------------------------------------------------------------
@@ -274,12 +274,13 @@ body[data-slug="index"] {
 }
 
 // ---------------------------------------------------------------------------
-// Homepage callouts — rounded corners and a hover lift (their coloured
-// identity borders are left alone)
+// Callouts — rounded corners and subtle shadow on hover across all pages
 // ---------------------------------------------------------------------------
-body[data-slug="index"] .callout {
+.callout {
   border-radius: 10px;
-  transition: box-shadow 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 
   &:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);

@@ -193,10 +193,10 @@ plugins:
         zoom: true
         depth: 1
         scale: 1.1
-        repelForce: 0.6
+        repelForce: 0.52
         centerForce: 0.3
-        linkDistance: 35
-        fontSize: 0.75
+        linkDistance: 32
+        fontSize: 0.65
         opacityScale: 1
         removeTags: []
         showTags: true
@@ -206,10 +206,10 @@ plugins:
         zoom: true
         depth: -1
         scale: 0.9
-        repelForce: 0.6
+        repelForce: 0.52
         centerForce: 0.3
-        linkDistance: 35
-        fontSize: 0.75
+        linkDistance: 32
+        fontSize: 0.65
         opacityScale: 1
         removeTags: []
         showTags: true
@@ -305,10 +305,10 @@ plugins:
         zoom: true
         depth: -1
         scale: 1.1
-        repelForce: 0.7
+        repelForce: 0.58
         centerForce: 0.3
-        linkDistance: 45
-        fontSize: 0.8
+        linkDistance: 38
+        fontSize: 0.7
         opacityScale: 1
         removeTags: []
         showTags: true
@@ -318,10 +318,10 @@ plugins:
         zoom: true
         depth: -1
         scale: 0.9
-        repelForce: 0.7
+        repelForce: 0.58
         centerForce: 0.3
-        linkDistance: 45
-        fontSize: 0.8
+        linkDistance: 38
+        fontSize: 0.7
         opacityScale: 1
         removeTags: []
         showTags: true
