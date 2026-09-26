@@ -4,7 +4,9 @@ configuration:
   pageTitleSuffix: ""
   enableSPA: true
   enablePopovers: true
-  analytics: null
+  analytics:
+    provider: cloudflare
+    token: "c7937bce6561481c95ff404672ac6f03"
   locale: en-US
   baseUrl: notes.nimendra.online
   ignorePatterns:
@@ -199,7 +201,7 @@ plugins:
         fontSize: 0.65
         opacityScale: 1
         removeTags: []
-        showTags: true
+        showTags: false
         enableRadial: false
       globalGraph:
         drag: true
@@ -212,7 +214,7 @@ plugins:
         fontSize: 0.65
         opacityScale: 1
         removeTags: []
-        showTags: true
+        showTags: false
         focusOnHover: true
         enableRadial: true
     layout:
@@ -311,7 +313,7 @@ plugins:
         fontSize: 0.7
         opacityScale: 1
         removeTags: []
-        showTags: true
+        showTags: false
         enableRadial: true
       globalGraph:
         drag: true
@@ -324,7 +326,7 @@ plugins:
         fontSize: 0.7
         opacityScale: 1
         removeTags: []
-        showTags: true
+        showTags: false
         focusOnHover: true
         enableRadial: true
     layout:

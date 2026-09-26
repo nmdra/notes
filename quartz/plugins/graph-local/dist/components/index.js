@@ -349,7 +349,7 @@ var defaultOptions = {
     linkDistance: 30,
     fontSize: 0.6,
     opacityScale: 1,
-    showTags: true,
+    showTags: false,
     removeTags: [],
     focusOnHover: false,
     enableRadial: false
@@ -364,7 +364,7 @@ var defaultOptions = {
     linkDistance: 30,
     fontSize: 0.6,
     opacityScale: 1,
-    showTags: true,
+    showTags: false,
     removeTags: [],
     focusOnHover: true,
     enableRadial: true

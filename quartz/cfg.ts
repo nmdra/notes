@@ -55,6 +55,10 @@ export type Analytics =
       siteId: string
       host?: string
     }
+  | {
+      provider: "cloudflare"
+      token: string
+    }
 
 export interface GlobalConfiguration {
   pageTitle: string
