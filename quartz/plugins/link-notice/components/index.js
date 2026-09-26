@@ -9,7 +9,7 @@ export const LinkNotice = () => {
   // verified homepage routes broken. Keep this list in sync with the cards.
   var TOPIC_ROUTES = new Set([
     "/00.fleeting-notes/ai-llm/",
-    "/02.areas/devops/docker/",
+    "/02.areas/platform-engineering/",
     "/02.areas/devops/cac--and--iac/",
     "/02.areas/kubernetes/k8s-primer/",
     "/02.areas/software-engineering/go-notes/",
