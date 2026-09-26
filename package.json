@@ -98,6 +98,7 @@
     "hast-util-to-jsx-runtime": "^2.3.6",
     "isomorphic-git": "^1.36.3",
     "lightningcss": "^1.31.1",
+    "medium-zoom": "1.1.0",
     "micromorph": "^0.4.5",
     "minimatch": "^10.1.1",
     "preact": "^10.28.2",

@@ -302,6 +302,11 @@ plugins:
   layout:
     position: afterBody
     priority: 100
+- source: ./quartz/plugins/image-zoom
+  enabled: true
+  layout:
+    position: afterBody
+    priority: 110
 - source: '@quartz-community/spacer'
   enabled: true
   options: {}

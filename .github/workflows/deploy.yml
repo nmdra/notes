@@ -120,7 +120,7 @@ jobs:
 
       # Local plugins load silently-but-fully when their .quartz symlinks are
       # missing: the build stays green and the component just vanishes from
-      # the site. Probe the emitted bundle for both local plugins.
+      # the site. Probe the emitted bundle and pages for expected components.
       - name: Local-plugin gate
         run: |
           set -euo pipefail
@@ -130,6 +130,10 @@ jobs:
           fi
           if ! grep -rq "Graph View" public --include="*.html"; then
             echo "::error::graph component missing from pages — local plugin not loaded"
+            exit 1
+          fi
+          if ! grep -rq "medium-zoom-overlay" public --include="*.js"; then
+            echo "::error::image-zoom script missing from bundle"
             exit 1
           fi
           echo "local plugins present"
