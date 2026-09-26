@@ -35,25 +35,20 @@ Welcome to my digital garden 🪴. This is a living collection of my working not
 
 ## 🌿 What's Growing Here
 
-> [!abstract] Cloud & DevOps
+> [!abstract]- Cloud & DevOps
 > Containers, Linux internals, container runtimes, networking, and security.
 >
 > → [[00. Docker Deep Dive Book Notes|Docker Deep Dive]] · [[Namespace & Cgroups|Linux Namespaces & Cgroups]] · [[Docker, containerd, CRI-O and runc|Container Runtimes]] · [[08. Docker Networking|Docker Networking]]
 
-> [!abstract] Infrastructure as Code (IaC) & Automation
+> [!abstract]- Infrastructure as Code (IaC) & Automation
 > Cloud provisioning, configuration management, state handling, and modular infrastructure.
 >
 > → [[01. Terraform|Terraform Essentials]] · [[07. Modules|Terraform Modules]] · [[01. Ansible|Ansible]] · [[03. Playbooks|Ansible Playbooks]]
 
-> [!abstract] AI & LLMs
+> [!abstract]- AI & LLMs
 > Book notes and deep dives on language models, agents, RAG, fine-tuning, and inference optimization.
->
-> → [[1. Introduction to LLMs|Designing LLM Applications]] · [[Hands-on Large Language Models]] · [[1. Introduction to AI Agents|AI Agents]]
-
-> [!abstract] LLM Internals
-> Caching strategies, quantization, mixture of experts, and model architecture details.
->
 > → [[Prefix vs KV vs Prompt Caching]] · [[LLM quantization]] · [[Mixture of Experts (MoE)]]
+> → [[1. Introduction to LLMs|Designing LLM Applications]] · [[Hands-on Large Language Models]] · [[1. Introduction to AI Agents|AI Agents]]
 
 ---
 

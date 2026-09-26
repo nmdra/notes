@@ -70,34 +70,43 @@ a.internal.broken:not(.tag-link)::after {
 // and the note-properties selector is prefixed with `body` because that
 // component's CSS ships in component-*.css, which loads after this file.
 // ---------------------------------------------------------------------------
+:root, :root[saved-theme="dark"] {
+  --tag-bg: var(--ctp-mocha-green);
+  --tag-text: var(--ctp-mocha-base);
+  --tag-hover-bg: var(--ctp-mocha-teal);
+}
+
 a.tag-link,
 body .note-properties .note-properties-tags .tag-link {
-  display: inline-block;
-  padding: 0.05rem 0.6rem;
-  border: 1px solid var(--gray);
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.65rem;
+  border: none;
   border-radius: 999px;
-  background: var(--lightgray);
-  color: var(--secondary);
+  background: var(--tag-bg);
+  color: var(--tag-text);
   font-size: 0.85em;
-  line-height: 1.7;
+  font-weight: 600;
+  line-height: 1.5;
   text-decoration: none;
   transition:
     background-color 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease;
+    color 0.15s ease,
+    transform 0.15s ease;
 }
 
 a.tag-link::before,
 body .note-properties .note-properties-tags .tag-link::before {
   color: inherit;
-  opacity: 0.65;
+  opacity: 0.7;
+  margin-right: 0.1rem;
 }
 
 a.tag-link:hover,
 body .note-properties .note-properties-tags .tag-link:hover {
-  background: var(--secondary);
-  border-color: var(--secondary);
-  color: var(--light);
+  background: var(--tag-hover-bg);
+  color: var(--tag-text);
+  transform: translateY(-1px);
 }
 
 // ---------------------------------------------------------------------------
