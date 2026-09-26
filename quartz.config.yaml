@@ -31,9 +31,9 @@ configuration:
         light: '#eff1f5'
         lightgray: '#ccd0da'
         gray: '#acb0be'
-        darkgray: '#6c6f85'
+        darkgray: '#5c5f77'
         dark: '#4c4f69'
-        secondary: '#1e66f5'
+        secondary: '#1b5ee0'
         tertiary: '#8839ef'
         highlight: rgba(30, 102, 245, 0.15)
         textHighlight: '#00000000'

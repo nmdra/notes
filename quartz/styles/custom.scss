@@ -35,13 +35,21 @@ html body a.internal-link:not(.tag-link) {
   border-radius: 0;
 }
 
+// Prose links need an affordance beyond color; card and tag links have borders.
+article a:not(.tag-link):not(.home-topic) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
+
 // Links whose target is not published are styled as disabled/dimmed text using
 // Catppuccin overlay colors and marked with a red warning suffix.
-a.internal.broken,
-a.internal.broken:hover {
+a.internal.broken:not(.tag-link):not(.home-topic),
+a.internal.broken:not(.tag-link):not(.home-topic):hover {
   opacity: 1; /* override base.scss 50% opacity */
-  color: var(--ctp-mocha-overlay0) !important;
-  text-decoration: none;
+  color: var(--ctp-macchiato-subtext1) !important;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
 }
 a.internal.broken:not(.tag-link)::after {
   content: " (not published)";
@@ -50,63 +58,79 @@ a.internal.broken:not(.tag-link)::after {
   margin-left: 0.2rem;
 }
 
-:root:not([saved-theme="dark"]) a.internal.broken,
-:root:not([saved-theme="dark"]) a.internal.broken:hover {
-  color: var(--ctp-latte-overlay0) !important;
+:root:not([saved-theme="dark"]) a.internal.broken:not(.tag-link):not(.home-topic),
+:root:not([saved-theme="dark"]) a.internal.broken:not(.tag-link):not(.home-topic):hover {
+  color: var(--ctp-latte-subtext1) !important;
 }
 :root:not([saved-theme="dark"]) a.internal.broken:not(.tag-link)::after {
   color: var(--ctp-latte-red);
 }
 
 // ---------------------------------------------------------------------------
-// Tags as chips
-//
-// Inline hashtags (`#LLM`) and the tag row in note properties render as
-// pills: soft surface, hairline border, accent text, filled on hover — the
-// chip anatomy from https://codefronts.com/snippets/css-tags-chips/. The `#`
-// base.scss puts on `.tag-link::before` is kept.
-//
-// Declared after the `a.internal` reset above (equal specificity, later wins),
-// and the note-properties selector is prefixed with `body` because that
-// component's CSS ships in component-*.css, which loads after this file.
+// Tags as chips — soft Catppuccin surfaces, with separate light/dark tokens.
+// The same link appears inline, in listings, on tag pages, and in note properties.
 // ---------------------------------------------------------------------------
-:root, :root[saved-theme="dark"] {
-  --tag-bg: var(--ctp-mocha-green);
-  --tag-text: var(--ctp-mocha-base);
-  --tag-hover-bg: var(--ctp-mocha-teal);
+:root {
+  --tag-bg: var(--ctp-latte-mantle);
+  --tag-text: var(--ctp-latte-text);
+  --tag-border: var(--ctp-latte-surface0);
+  --tag-hover-bg: var(--ctp-latte-surface0);
+  --tag-focus: var(--secondary);
+}
+
+:root[saved-theme="dark"] {
+  --tag-bg: var(--ctp-macchiato-surface0);
+  --tag-text: var(--ctp-macchiato-text);
+  --tag-border: var(--ctp-macchiato-surface1);
+  --tag-hover-bg: var(--ctp-macchiato-surface1);
+  --tag-focus: var(--secondary);
 }
 
 a.tag-link,
 body .note-properties .note-properties-tags .tag-link {
   display: inline-flex;
+  opacity: 1;
   align-items: center;
+  max-width: 100%;
   padding: 0.15rem 0.65rem;
-  border: none;
+  border: 1px solid var(--tag-border);
   border-radius: 999px;
   background: var(--tag-bg);
   color: var(--tag-text);
   font-size: 0.85em;
   font-weight: 600;
   line-height: 1.5;
+  overflow-wrap: anywhere;
   text-decoration: none;
   transition:
     background-color 0.15s ease,
-    color 0.15s ease,
-    transform 0.15s ease;
+    border-color 0.15s ease;
 }
 
 a.tag-link::before,
 body .note-properties .note-properties-tags .tag-link::before {
   color: inherit;
-  opacity: 0.7;
   margin-right: 0.1rem;
 }
 
 a.tag-link:hover,
 body .note-properties .note-properties-tags .tag-link:hover {
   background: var(--tag-hover-bg);
+  border-color: var(--tag-focus);
   color: var(--tag-text);
-  transform: translateY(-1px);
+}
+
+a.tag-link:focus-visible,
+body .note-properties .note-properties-tags .tag-link:focus-visible {
+  outline: 2px solid var(--tag-focus);
+  outline-offset: 2px;
+}
+
+// Generated tag pages are not source slugs, so they can inherit `.broken`.
+// They still have real destinations and must retain chip contrast.
+a.internal.tag-link.broken {
+  color: var(--tag-text);
+  opacity: 1;
 }
 
 // ---------------------------------------------------------------------------
@@ -126,12 +150,12 @@ body .note-properties .note-properties-tags .tag-link:hover {
   --graph-node-current: #8caaee; // frappé blue
   --graph-node-neighbor: #ca9ee6; // frappé mauve
   --graph-node-other: #737994; // frappé overlay0
-  --hero-accent: #ca9ee6; // frappé mauve — --tertiary is a duplicate of --secondary here
+  --hero-accent: var(--ctp-latte-mauve); // readable accent on the light surface
   --graph-link: #b5bfe2; // frappé subtle surface tone for balanced link lines
 }
 
 :root[saved-theme="dark"] {
-  --hero-accent: rgb(var(--ctp-mauve)); // macchiato mauve
+  --hero-accent: var(--ctp-macchiato-mauve);
   --graph-link: #545872; // macchiato subtle surface tone for balanced link lines
 }
 
@@ -207,17 +231,24 @@ li.section-li {
       transform 0.15s ease,
       box-shadow 0.2s ease;
 
-    &:hover {
+    &:hover,
+    &:focus-within {
       border-color: var(--tertiary);
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
   }
 
+  a:focus-visible {
+    outline: 2px solid var(--secondary);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
   .meta {
     margin: 0;
     font-size: 0.8em;
-    opacity: 0.6;
+    color: var(--darkgray);
     order: -1;
   }
 
@@ -255,27 +286,101 @@ h2:has(> a.tag-link) {
 }
 
 // ---------------------------------------------------------------------------
+// Homepage topic directory — every card is an actual link, not a disclosure.
+// Quartz marks generated folder pages as broken because they are not source
+// slugs, even though those routes exist. LinkNotice allows these verified cards.
+// ---------------------------------------------------------------------------
+body[data-slug="index"] {
+  .home-topics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: 0.85rem;
+    margin: 1.25rem 0 2rem;
+  }
+
+  a.home-topic.internal {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--lightgray);
+    border-radius: 10px;
+    background: var(--light);
+    color: var(--darkgray);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    transition:
+      border-color 0.15s ease,
+      background-color 0.15s ease;
+
+    strong {
+      color: var(--secondary);
+      font-size: 1rem;
+    }
+
+    span {
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--secondary);
+      background: color-mix(in srgb, var(--secondary) 5%, var(--light));
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--secondary);
+      outline-offset: 2px;
+    }
+  }
+
+  // Folder routes exist; suppress the false "not published" indicator.
+  a.home-topic.internal.broken {
+    opacity: 1;
+
+    &::after {
+      display: none;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Homepage hero — gradient title with a shimmering separator
 // ---------------------------------------------------------------------------
 body[data-slug="index"] {
-  article h1:first-of-type {
-    background: linear-gradient(
-      135deg,
-      var(--secondary) 0%,
-      var(--hero-accent, var(--tertiary)) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-size: 2.2rem;
+  .popover-hint h1 {
+    position: relative;
+    padding-bottom: 0.65rem;
+    color: var(--dark); // fallback if gradient text is unavailable
+    font-size: clamp(1.65rem, 4vw, 2.2rem);
     margin-bottom: 0.3rem;
+
+    @supports (background-clip: text) {
+      background: linear-gradient(135deg, var(--secondary), var(--hero-accent));
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
   }
 
-  article h1:first-of-type::after {
+  .popover-hint h1::after {
+    content: "🪴";
+    margin-left: 0.12em;
+    color: var(--dark);
+    background: none;
+    -webkit-text-fill-color: initial;
+    font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+    font-size: 0.85em;
+  }
+
+  .popover-hint h1::before {
     content: "";
-    display: block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
     height: 3px;
-    margin-top: 0.5rem;
     border-radius: 2px;
     background: linear-gradient(
       90deg,
@@ -334,8 +439,14 @@ body[data-slug="index"] .recent-notes {
     margin-bottom: 0.6rem;
     transition: border-color 0.2s ease;
 
-    &:hover {
+    &:hover,
+    &:focus-within {
       border-color: var(--tertiary);
+    }
+
+    a:focus-visible {
+      outline: 2px solid var(--secondary);
+      outline-offset: 2px;
     }
 
     .section {
@@ -549,38 +660,6 @@ pre {
 }
 
 // ---------------------------------------------------------------------------
-// Homepage global graph — taller container in afterBody
-// ---------------------------------------------------------------------------
-body[data-slug="index"] {
-  // Hide the duplicate small local graph in the right sidebar on homepage
-  .sidebar.right .graph {
-    display: none;
-  }
-
-  .page-footer .graph {
-    margin-top: 1.5rem;
-    margin-bottom: 2.5rem;
-
-    .graph-outer {
-      height: 440px;
-      max-height: 60vh;
-      border: 1px solid var(--lightgray);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    > h3 {
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--secondary);
-      margin-bottom: 0.75rem;
-    }
-  }
-}
-
-// ---------------------------------------------------------------------------
 // Popovers — card-style hover previews
 // ---------------------------------------------------------------------------
 .popover {
@@ -657,7 +736,7 @@ footer {
 
   p {
     font-size: 0.82rem;
-    opacity: 0.7;
+    color: var(--darkgray);
   }
 
   a {
@@ -717,7 +796,7 @@ code:not(pre code) {
 // ---------------------------------------------------------------------------
 .breadcrumb-container {
   font-size: 0.82rem;
-  opacity: 0.7;
+  color: var(--darkgray);
   margin-bottom: 0.5rem;
 
   a {
@@ -739,10 +818,39 @@ code:not(pre code) {
 // ---------------------------------------------------------------------------
 .content-meta {
   font-size: 0.82rem;
-  opacity: 0.65;
+  color: var(--darkgray);
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--lightgray);
   margin-bottom: 1.5rem;
+}
+
+// ---------------------------------------------------------------------------
+// Reduced motion — preserve state changes without decorative movement.
+// ---------------------------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  body[data-slug="index"] .popover-hint h1::before,
+  article {
+    animation: none;
+  }
+
+  li.section-li > .section:hover,
+  li.section-li > .section:focus-within {
+    transform: none;
+  }
+
+  .home-topic,
+  .tag-link,
+  li.section-li > .section,
+  .recent-notes .recent-ul > li,
+  .callout,
+  .popover,
+  #link-notice {
+    transition: none !important;
+  }
 }
 
 // ---------------------------------------------------------------------------

@@ -5,6 +5,16 @@ export const LinkNotice = () => {
   var ASSET_RE = /\.(pdf|docx?|xlsx?|pptx?|zip|epub|csv|ipynb|canvas)$/i
   var NOTICE_TEXT =
     "This page hasn't been published yet — it will become available once its content is published."
+  // Folder pages are emitted without source slugs, so CrawlLinks marks these
+  // verified homepage routes broken. Keep this list in sync with the cards.
+  var TOPIC_ROUTES = new Set([
+    "/00.fleeting-notes/ai-llm/",
+    "/02.areas/devops/docker/",
+    "/02.areas/devops/cac--and--iac/",
+    "/02.areas/kubernetes/k8s-primer/",
+    "/02.areas/software-engineering/go-notes/",
+    "/00.fleeting-notes/site-reliability-engineering/",
+  ])
 
   function showNotice(text) {
     var el = document.getElementById("link-notice")
@@ -36,9 +46,13 @@ export const LinkNotice = () => {
       if (!href || href.charAt(0) === "#") return
       if (/^[a-z][a-z0-9+.-]*:/i.test(href)) return
       var path = href.split(/[?#]/)[0]
-      // tag links carry the broken class (tag slugs are not in the slug
-      // set) but resolve to real tag pages — let them navigate
+      // Let only the six verified homepage folder routes bypass the false
+      // broken-link marker; keep notices for other unpublished destinations.
       if (a.classList.contains("tag-link")) return
+      if (document.body.dataset.slug === "index" &&
+          a.classList.contains("home-topic") &&
+          a.closest(".home-topics") &&
+          TOPIC_ROUTES.has(new URL(href, location.href).pathname)) return
       if (a.classList.contains("broken") || ASSET_RE.test(path)) {
         e.preventDefault()
         e.stopPropagation()

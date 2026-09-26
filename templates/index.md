@@ -1,56 +1,51 @@
 ---
-title: Nimendra's Notes 🪴
+title: Nimendra's Notes
 ---
 
 **To:** Explorers & Builders
 **From:** Nimendra
 
-Welcome to my digital garden 🪴. This is a living collection of my working notes about various topics—especially Cloud, DevOps, System Design, and AI—growing steadily from seeds of thought to evergreen knowledge, published straight from my Obsidian vault.
+Welcome to my digital garden 🪴. These are my working notes on cloud infrastructure, software engineering, systems, and AI, published as they grow. Pick a topic below and see where it takes you.
 
-**Feel free to explore the vault!**
+## What's growing here
 
-**Explore more**
+<nav class="home-topics" aria-label="Browse by topic">
+  <a class="home-topic" href="/00.fleeting-notes/ai-llm/">
+    <strong>AI &amp; LLMs</strong>
+    <span>Agents, language models, and practical AI systems.</span>
+  </a>
+  <a class="home-topic" href="/02.areas/devops/docker/">
+    <strong>Docker &amp; containers</strong>
+    <span>Images, runtimes, networking, and deployment.</span>
+  </a>
+  <a class="home-topic" href="/02.areas/devops/cac--and--iac/">
+    <strong>Infrastructure as code</strong>
+    <span>Provisioning and configuration management.</span>
+  </a>
+  <a class="home-topic" href="/02.areas/kubernetes/k8s-primer/">
+    <strong>Kubernetes</strong>
+    <span>Cluster concepts and hands-on learning.</span>
+  </a>
+  <a class="home-topic" href="/02.areas/software-engineering/go-notes/">
+    <strong>Go &amp; software engineering</strong>
+    <span>Language notes and engineering fundamentals.</span>
+  </a>
+  <a class="home-topic" href="/00.fleeting-notes/site-reliability-engineering/">
+    <strong>Reliability &amp; observability</strong>
+    <span>Operating and understanding production systems.</span>
+  </a>
+</nav>
 
-- **[Read my blog](https://blog.nimendra.online/)** — longer-form writing and essays
-- **[Learn more about me](https://blog.nimendra.online/about)** — a little more about who I am
+## Find your way
 
-**Find me elsewhere**
+Use **Search** in the toolbar (`Ctrl/Cmd + K`) to look up a note, or open the **Explorer** to browse all published folders. Recently updated notes appear below this introduction.
 
-[View my GitHub](https://github.com/nmdra) · [Connect on LinkedIn](https://www.linkedin.com/in/nimendra/) · [Follow me on X](https://x.com/nimendra_) · [Find me on Bluesky](https://bsky.app/profile/nimendra.xyz) · [Send me an email](mailto:nimendraonline@gmail.com)
+## Elsewhere
 
-> [!quote]
-> _“Creativity is just connecting things. When you ask creative people how they did something, they feel a little guilty because they didn’t really do it, they just saw something.”_ (Steve Jobs)
-> ― Sönke Ahrens, How to Take Smart Notes
+For longer-form writing, visit [my blog](https://blog.nimendra.online/). You can also find me on [GitHub](https://github.com/nmdra) or [LinkedIn](https://www.linkedin.com/in/nimendra/).
 
----
+Happy wandering,
+Nimendra
 
-> [!tip] Wandering the garden
->
-> - **Search** — press `Ctrl + K` or click the search icon
-> - **Hover** any wikilink for a preview popup
-> - **Graph** — press `Ctrl + G` for the full vault map modal
-> - **Explorer** — browse folders in the left sidebar
-
----
-
-## 🌿 What's Growing Here
-
-> [!abstract]- Cloud & DevOps
-> Containers, Linux internals, container runtimes, networking, and security.
->
-> → [[00. Docker Deep Dive Book Notes|Docker Deep Dive]] · [[Namespace & Cgroups|Linux Namespaces & Cgroups]] · [[Docker, containerd, CRI-O and runc|Container Runtimes]] · [[08. Docker Networking|Docker Networking]]
-
-> [!abstract]- Infrastructure as Code (IaC) & Automation
-> Cloud provisioning, configuration management, state handling, and modular infrastructure.
->
-> → [[01. Terraform|Terraform Essentials]] · [[07. Modules|Terraform Modules]] · [[01. Ansible|Ansible]] · [[03. Playbooks|Ansible Playbooks]]
-
-> [!abstract]- AI & LLMs
-> Book notes and deep dives on language models, agents, RAG, fine-tuning, and inference optimization.
-> → [[Prefix vs KV vs Prompt Caching]] · [[LLM quantization]] · [[Mixture of Experts (MoE)]]
-> → [[1. Introduction to LLMs|Designing LLM Applications]] · [[Hands-on Large Language Models]] · [[1. Introduction to AI Agents|AI Agents]]
-
----
-
-> [!warning]- About broken links
-> Some notes and linked documents haven't been published yet, so their links may return a 404 or notice. They'll become available as more notes are published.
+> [!note]- About unpublished links
+> Some notes refer to pages or documents that are not published here. Those links may show a notice instead of opening a page.
