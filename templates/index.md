@@ -22,7 +22,7 @@ Welcome to my digital garden 🪴. These are my working notes on cloud infrastru
     <strong>Kubernetes</strong>
     <span>Cluster concepts and hands-on learning.</span>
   </a>
-  <a class="home-topic" href="/2.Areas/platform-engineering">
+  <a class="home-topic" href="/02.areas/platform-engineering/">
     <strong>Platform Engineering</strong>
     <span>Platform Engineering concepts and tools</span>
   </a>
