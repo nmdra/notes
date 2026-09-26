@@ -537,23 +537,12 @@ pre {
 }
 
 // ---------------------------------------------------------------------------
-// Right sidebar — TOC, backlinks, graph
+// Right sidebar — TOC and graph
 //
-// Three problems fixed here, all visible on desktop:
-//
-// 1. Collapsing the TOC hid it completely. The plugin's collapsed state
-//    shrinks `.toc` to 1.4rem, but the global `h3` rules (1.62rem top and
-//    bottom margins, 1.12rem font) made the header button ~63px tall, so the
-//    header was clipped out of the 1.4rem box together with the list. The
-//    header is flattened (no margins, 1rem font) and the collapsed box is
-//    allowed to hug the header, with the list itself display:none — the
-//    chevron row stays visible and clickable to expand again.
-// 2. Section headings (`Table of Contents`, `Backlinks`, `Graph View`) rendered
-//    at the article h3 size in the accent blue, which outweighed the content
-//    they label. They are normalized to a small, quiet label style shared by
-//    all three sections.
-// 3. The three sections ran into each other — sidebar gap is the only spacing
-//    they get — so each section gets a hairline separator instead.
+// Keep the TOC header visible while its list scrolls. On desktop, let the TOC
+// use the remaining sidebar height and keep the graph at its configured size.
+// If the viewport is too short, the sidebar itself scrolls instead of clipping
+// the graph. Backlinks live below the article, outside this fixed-height column.
 // ---------------------------------------------------------------------------
 .sidebar.right .toc .toc-header h3 {
   margin: 0;
@@ -571,7 +560,6 @@ pre {
 
 .sidebar.right {
   .toc > .toc-header,
-  .backlinks > h3,
   .graph > h3 {
     font-size: 0.78rem;
     font-weight: 600;
@@ -591,25 +579,9 @@ pre {
     }
   }
 
-  .backlinks,
   .graph {
     padding-top: 1rem;
     border-top: 1px solid var(--lightgray);
-  }
-
-  .backlinks > ul.overflow > li > a {
-    display: block;
-    padding: 0.25rem 0.5rem;
-    margin-left: -0.5rem;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    line-height: 1.35;
-    transition: background-color 0.15s ease;
-
-    &:hover {
-      background-color: color-mix(in srgb, var(--dark) 6%, transparent);
-    }
   }
 
   .toc .toc-content.overflow > li > a {
@@ -626,6 +598,65 @@ pre {
 
   .graph > .graph-outer {
     border-radius: 8px;
+  }
+}
+
+@media all and (min-width: 1201px) {
+  .sidebar.right {
+    min-height: 0;
+    overflow-y: auto;
+
+    & > .toc {
+      flex: 1 1 0;
+      min-height: 8rem;
+    }
+
+    & > .toc:has(> .toc-header.collapsed) {
+      min-height: 2rem;
+    }
+
+    .toc .toc-content.overflow {
+      min-height: 0;
+    }
+
+    & > .graph {
+      flex: 0 0 auto;
+    }
+  }
+}
+
+// DefaultFrame already places an <hr> between the article and its afterBody
+// components, so backlinks inherit the footer divider and add only section gap.
+.page-footer .backlinks {
+  margin-top: 1.5rem;
+
+  & > h3 {
+    margin: 0 0 0.4rem;
+    color: var(--darkgray);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  & > ul.overflow {
+    max-height: none;
+    overflow: visible;
+  }
+
+  & > ul.overflow > li > a {
+    display: block;
+    padding: 0.25rem 0.5rem;
+    margin-left: -0.5rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.35;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--dark) 6%, transparent);
+    }
   }
 }
 

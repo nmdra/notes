@@ -226,8 +226,8 @@ plugins:
 - source: '@quartz-community/backlinks'
   enabled: true
   layout:
-    position: right
-    priority: 30
+    position: afterBody
+    priority: 20
 - source: '@quartz-community/article-title'
   enabled: true
   layout:
@@ -351,6 +351,8 @@ layout:
       gap: 0.5rem
   byPageType:
     '404':
+      exclude:
+        - '@quartz-community/backlinks'
       positions:
         beforeBody: []
         left: []
@@ -358,12 +360,14 @@ layout:
     content: {}
     folder:
       exclude:
-      - reader-mode
+        - reader-mode
+        - '@quartz-community/backlinks'
       positions:
         right: []
     tag:
       exclude:
-      - reader-mode
+        - reader-mode
+        - '@quartz-community/backlinks'
       positions:
         right: []
     canvas: {}
