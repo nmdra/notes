@@ -28,6 +28,7 @@ The graph plugin currently sits in the **right sidebar** on every page. We'll ad
 ### 1a. Add `is-index` condition ✅ (already done)
 
 In [conditions.ts](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/plugins/loader/conditions.ts), we already added:
+
 ```typescript
 "is-index": (props) => props.fileData.slug === "index",
 ```
@@ -45,7 +46,7 @@ In [conditions.ts](file:///home/nimendra/Documents/Projects/obsidian-publish/qua
     globalGraph:
       drag: true
       zoom: true
-      depth: -1           # show ALL connections
+      depth: -1 # show ALL connections
       scale: 0.9
       repelForce: 0.5
       centerForce: 0.3
@@ -72,7 +73,7 @@ In [custom.scss](file:///home/nimendra/Documents/Projects/obsidian-publish/quart
 // Homepage graph — taller container when rendered in afterBody
 // ---------------------------------------------------------------------------
 .page-footer #graph-container {
-  height: 400px;  // default sidebar is ~250px
+  height: 400px; // default sidebar is ~250px
   max-height: 50vh;
   border: 1px solid var(--lightgray);
   border-radius: 8px;
@@ -94,13 +95,13 @@ The `@quartz-community/recent-notes` plugin is already installed but **disabled*
   options:
     title: "📝 Recently Updated"
     limit: 5
-    showTags: false           # your notes use inline #tags, not frontmatter tags
+    showTags: false # your notes use inline #tags, not frontmatter tags
     hideTagPages: true
     hideFolderPages: true
     linkToMore: false
   layout:
     position: afterBody
-    priority: 10              # renders before the graph (priority 20)
+    priority: 10 # renders before the graph (priority 20)
     condition: is-index
 ```
 
@@ -124,6 +125,7 @@ title: Nimendra's Notes
 A self-learner exploring **Cloud & DevOps**, **Systems**, and **AI/LLM** — these are my working notes, published straight from my Obsidian vault.
 
 > [!tip] How to navigate
+>
 > - Browse folders in the **Explorer** (left sidebar)
 > - Use **Search** — `Ctrl/Alt + /`
 > - Hover any [[wikilink]] for a **preview popup**
@@ -135,12 +137,12 @@ A self-learner exploring **Cloud & DevOps**, **Systems**, and **AI/LLM** — the
 
 > [!abstract] AI & LLMs
 > Book notes and deep dives on language models, agents, RAG, fine-tuning, and inference optimization.
-> 
+>
 > → [[1. Introduction to LLMs|Designing LLM Applications]] · [[Hands-on Large Language Models]] · [[An Illustrated Guide to AI Agents]]
 
 > [!abstract] LLM Internals
 > Caching strategies, tokenization, quantization, mixture of experts, and model weights.
-> 
+>
 > → [[Prefix vs KV vs Prompt Caching]] · [[LLM quantization]] · [[Mixture of Experts (MoE)]]
 
 ---
@@ -160,14 +162,15 @@ A self-learner exploring **Cloud & DevOps**, **Systems**, and **AI/LLM** — the
 ```
 
 ### What changed and why
-| Section | Before | After |
-|---|---|---|
-| Title | "Notes" | "Nimendra's Notes" — more personal, better for SEO |
-| Intro | Generic bio | Focused on what the vault contains |
-| Navigation | Bullet list of instructions | Callout box with keyboard shortcuts & popover tip |
-| Content directory | None | Two callout blocks with direct wikilinks to key series |
-| Social links | Flat list | Compact single line with all links |
-| 404 disclaimer | Always visible blockquote | Collapsed callout (click to expand) |
+
+| Section           | Before                      | After                                                  |
+| ----------------- | --------------------------- | ------------------------------------------------------ |
+| Title             | "Notes"                     | "Nimendra's Notes" — more personal, better for SEO     |
+| Intro             | Generic bio                 | Focused on what the vault contains                     |
+| Navigation        | Bullet list of instructions | Callout box with keyboard shortcuts & popover tip      |
+| Content directory | None                        | Two callout blocks with direct wikilinks to key series |
+| Social links      | Flat list                   | Compact single line with all links                     |
+| 404 disclaimer    | Always visible blockquote   | Collapsed callout (click to expand)                    |
 
 ---
 
@@ -207,7 +210,10 @@ li.section-li {
     border-radius: 10px;
     background: var(--light);
     height: 100%;
-    transition: border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      transform 0.15s ease,
+      box-shadow 0.2s ease;
 
     &:hover {
       border-color: var(--tertiary);
@@ -314,8 +320,13 @@ body[data-slug="index"] {
 }
 
 @keyframes shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 ```
 
@@ -328,7 +339,9 @@ body[data-slug="index"] {
 body[data-slug="index"] .callout {
   border-radius: 10px;
   border: 1px solid var(--lightgray);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
     border-color: var(--tertiary);
@@ -468,23 +481,23 @@ pre {
 
 Lower-priority but worth considering:
 
-| Feature | Plugin | What it does |
-|---|---|---|
-| **Tag list in sidebar** | `@quartz-community/tag-list` (disabled) | Shows tag cloud — enable with `condition: is-index` in `beforeBody` once you add frontmatter tags |
-| **Stacked pages** | `@quartz-community/stacked-pages` (disabled) | Andy Matuschak-style sliding panes — nice for deep browsing |
-| **Comments** | `@quartz-community/comments` (disabled, giscus) | Let visitors leave comments via GitHub Discussions |
-| **Frontmatter tags** | Manual content work | Your notes use inline `#tags` but not frontmatter `tags:` — adding them would unlock tag pages and tag-based filtering in recent notes |
+| Feature                 | Plugin                                          | What it does                                                                                                                           |
+| ----------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tag list in sidebar** | `@quartz-community/tag-list` (disabled)         | Shows tag cloud — enable with `condition: is-index` in `beforeBody` once you add frontmatter tags                                      |
+| **Stacked pages**       | `@quartz-community/stacked-pages` (disabled)    | Andy Matuschak-style sliding panes — nice for deep browsing                                                                            |
+| **Comments**            | `@quartz-community/comments` (disabled, giscus) | Let visitors leave comments via GitHub Discussions                                                                                     |
+| **Frontmatter tags**    | Manual content work                             | Your notes use inline `#tags` but not frontmatter `tags:` — adding them would unlock tag pages and tag-based filtering in recent notes |
 
 ---
 
 ## Files to Change
 
-| File | Action |
-|---|---|
-| [conditions.ts](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/plugins/loader/conditions.ts) | ✅ Already added `is-index` |
-| [quartz.config.yaml](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz.config.yaml) | Enable recent-notes, add homepage graph instance |
-| [content/index.md](file:///home/nimendra/Documents/Projects/obsidian-publish/content/index.md) | Rewrite with callouts, topic directory, nav tips |
-| [custom.scss](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss) | Card grids, tag cloud, hero gradient, callout cards, recent notes, graph sizing, reading polish, explorer highlight |
+| File                                                                                                           | Action                                                                                                              |
+| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| [conditions.ts](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/plugins/loader/conditions.ts) | ✅ Already added `is-index`                                                                                         |
+| [quartz.config.yaml](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz.config.yaml)             | Enable recent-notes, add homepage graph instance                                                                    |
+| [content/index.md](file:///home/nimendra/Documents/Projects/obsidian-publish/content/index.md)                 | Rewrite with callouts, topic directory, nav tips                                                                    |
+| [custom.scss](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss)             | Card grids, tag cloud, hero gradient, callout cards, recent notes, graph sizing, reading polish, explorer highlight |
 
 ---
 
@@ -494,4 +507,3 @@ Lower-priority but worth considering:
 2. **Content rewrite** — `content/index.md`
 3. **CSS polish** — `quartz/styles/custom.scss` (all Phase 4 + Phase 5 styles)
 4. **Build & test** — `npx quartz build --serve` to preview locally
-

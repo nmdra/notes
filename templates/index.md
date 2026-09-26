@@ -9,7 +9,7 @@ Welcome to my working notes on **Cloud & DevOps**, **Systems**, and **AI/LLM** �
 > [!tip] Navigation tips
 >
 > - **Search** — press `Alt + /` or click the search icon
-> - **Hover** any [[wikilink]] for a preview popup
+> - **Hover** any wikilink for a preview popup
 > - **Graph** — press `Ctrl + G` for the full vault map modal
 > - **Explorer** — browse folders in the left sidebar
 

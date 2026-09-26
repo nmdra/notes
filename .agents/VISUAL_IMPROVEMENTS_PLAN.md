@@ -8,33 +8,35 @@
 ## Status Audit
 
 ### ✅ Already Implemented
-| Feature | Where |
-|---|---|
-| `is-index` condition | [conditions.ts](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/plugins/loader/conditions.ts) |
-| Card grid for tag/folder pages | [custom.scss L156-216](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L156-L216) |
-| Tag cloud on `/tags/` index | [custom.scss L222-227](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L222-L227) |
-| Gradient hero title + shimmer | [custom.scss L232-272](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L232-L272) |
-| Homepage callout hover | [custom.scss L278-285](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L278-L285) |
-| Recent notes enabled (homepage-only) | [quartz.config.yaml L299-311](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz.config.yaml#L299-L311) |
-| Recent notes card styling | [custom.scss L290-322](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L290-L322) |
-| Gradient HR | [custom.scss L327-338](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L327-L338) |
-| Image border-radius | [custom.scss L340-343](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L340-L343) |
-| Code block top accent | [custom.scss L345-348](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L345-L348) |
-| Explorer active + folder hover | [custom.scss L353-388](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L353-L388) |
-| Wider content on large screens | [custom.scss L393-397](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L393-L397) |
+
+| Feature                                      | Where                                                                                                                 |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `is-index` condition                         | [conditions.ts](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/plugins/loader/conditions.ts)        |
+| Card grid for tag/folder pages               | [custom.scss L156-216](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L156-L216) |
+| Tag cloud on `/tags/` index                  | [custom.scss L222-227](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L222-L227) |
+| Gradient hero title + shimmer                | [custom.scss L232-272](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L232-L272) |
+| Homepage callout hover                       | [custom.scss L278-285](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L278-L285) |
+| Recent notes enabled (homepage-only)         | [quartz.config.yaml L299-311](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz.config.yaml#L299-L311) |
+| Recent notes card styling                    | [custom.scss L290-322](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L290-L322) |
+| Gradient HR                                  | [custom.scss L327-338](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L327-L338) |
+| Image border-radius                          | [custom.scss L340-343](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L340-L343) |
+| Code block top accent                        | [custom.scss L345-348](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L345-L348) |
+| Explorer active + folder hover               | [custom.scss L353-388](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L353-L388) |
+| Wider content on large screens               | [custom.scss L393-397](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L393-L397) |
 | Right sidebar polish (TOC, backlinks, graph) | [custom.scss L418-490](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L418-L490) |
-| Graph colors (Frappé light mode) | [custom.scss L99-108](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L99-L108) |
-| Search overlay fix | [custom.scss L122-151](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L122-L151) |
-| Broken link toast | [custom.scss L495-520](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L495-L520) |
-| Tag chip pills | [custom.scss L56-84](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L56-L84) |
-| Vendored graph with custom node colors | [quartz.config.yaml L188-220](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz.config.yaml#L188-L220) |
+| Graph colors (Frappé light mode)             | [custom.scss L99-108](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L99-L108)   |
+| Search overlay fix                           | [custom.scss L122-151](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L122-L151) |
+| Broken link toast                            | [custom.scss L495-520](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L495-L520) |
+| Tag chip pills                               | [custom.scss L56-84](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L56-L84)     |
+| Vendored graph with custom node colors       | [quartz.config.yaml L188-220](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz.config.yaml#L188-L220) |
 
 ### ❌ Still Missing (from original plan)
-| Feature | Status |
-|---|---|
-| **Homepage global graph** in `afterBody` | Not in config — only the sidebar local graph exists |
-| **Homepage graph container sizing** (400px) | No CSS targeting homepage graph in afterBody |
-| **`index.md` content rewrite** | Partially done — has hero + links but **missing topic directory callouts** (`> [!abstract] AI & LLMs`, etc.) and nav tips callout |
+
+| Feature                                     | Status                                                                                                                            |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **Homepage global graph** in `afterBody`    | Not in config — only the sidebar local graph exists                                                                               |
+| **Homepage graph container sizing** (400px) | No CSS targeting homepage graph in afterBody                                                                                      |
+| **`index.md` content rewrite**              | Partially done — has hero + links but **missing topic directory callouts** (`> [!abstract] AI & LLMs`, etc.) and nav tips callout |
 
 ---
 
@@ -148,11 +150,7 @@ The default blockquote uses a 3px solid `--secondary` left border. Upgrade to a 
 // ---------------------------------------------------------------------------
 blockquote {
   border-left: 3px solid transparent;
-  border-image: linear-gradient(
-    to bottom,
-    var(--secondary),
-    var(--tertiary)
-  ) 1;
+  border-image: linear-gradient(to bottom, var(--secondary), var(--tertiary)) 1;
   background: color-mix(in srgb, var(--lightgray) 30%, transparent);
   padding: 0.6rem 1rem;
   border-radius: 0 6px 6px 0;
@@ -397,6 +395,7 @@ Welcome to my notes. Browse the folders in the **explorer** on the left,
 or use **search** to find something specific.
 
 > [!tip] Navigation tips
+>
 > - **Search** — press `Alt + /` or click the search icon
 > - **Hover** any [[wikilink]] for a preview popup
 > - **Graph** — press `Ctrl + G` for the full vault map
@@ -446,20 +445,20 @@ or use **search** to find something specific.
 
 ## Summary — What to Do
 
-| # | Change | File | Priority |
-|---|---|---|---|
-| 1 | **Homepage global graph** | `quartz.config.yaml` + `custom.scss` | 🔴 High |
-| 2 | **Popover card styling** | `custom.scss` | 🟡 Medium |
-| 3 | **Blockquote gradient border** | `custom.scss` | 🟡 Medium |
-| 4 | **Table striped rows** | `custom.scss` | 🟡 Medium |
-| 5 | **Footer separator + muted** | `custom.scss` | 🟢 Low |
-| 6 | **SPA fade-in animation** | `custom.scss` | 🟢 Low |
-| 7 | **Inline code outline** | `custom.scss` | 🟢 Low |
-| 8 | **Mobile nav bar polish** | `custom.scss` | 🟡 Medium |
-| 9 | **Breadcrumb muting** | `custom.scss` | 🟢 Low |
-| 10 | **Content meta separator** | `custom.scss` | 🟢 Low |
-| 11 | **Dark mode scrollbar** | `custom.scss` | 🟡 Medium |
-| 12 | **`index.md` topic directory** | `content/index.md` | 🔴 High |
+| #   | Change                         | File                                 | Priority  |
+| --- | ------------------------------ | ------------------------------------ | --------- |
+| 1   | **Homepage global graph**      | `quartz.config.yaml` + `custom.scss` | 🔴 High   |
+| 2   | **Popover card styling**       | `custom.scss`                        | 🟡 Medium |
+| 3   | **Blockquote gradient border** | `custom.scss`                        | 🟡 Medium |
+| 4   | **Table striped rows**         | `custom.scss`                        | 🟡 Medium |
+| 5   | **Footer separator + muted**   | `custom.scss`                        | 🟢 Low    |
+| 6   | **SPA fade-in animation**      | `custom.scss`                        | 🟢 Low    |
+| 7   | **Inline code outline**        | `custom.scss`                        | 🟢 Low    |
+| 8   | **Mobile nav bar polish**      | `custom.scss`                        | 🟡 Medium |
+| 9   | **Breadcrumb muting**          | `custom.scss`                        | 🟢 Low    |
+| 10  | **Content meta separator**     | `custom.scss`                        | 🟢 Low    |
+| 11  | **Dark mode scrollbar**        | `custom.scss`                        | 🟡 Medium |
+| 12  | **`index.md` topic directory** | `content/index.md`                   | 🔴 High   |
 
 > [!TIP]
 > Items 1 and 12 are the **biggest visual wins** — the graph gives the homepage a "wow" factor, and the topic callouts turn it from a plain greeting into a useful entry point.

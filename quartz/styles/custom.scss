@@ -586,11 +586,7 @@ body[data-slug="index"] {
 // ---------------------------------------------------------------------------
 blockquote {
   border-left: 3px solid var(--secondary);
-  border-image: linear-gradient(
-    to bottom,
-    var(--secondary),
-    var(--tertiary)
-  ) 1;
+  border-image: linear-gradient(to bottom, var(--secondary), var(--tertiary)) 1;
   background: color-mix(in srgb, var(--lightgray) 30%, transparent);
   padding: 0.6rem 1rem;
   border-radius: 0 6px 6px 0;

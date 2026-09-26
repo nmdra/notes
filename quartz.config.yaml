@@ -187,7 +187,7 @@ plugins:
   # identical code plus one change — node colors are read from --graph-node-*
   # with the theme vars as fallback, so light mode can use Frappé tones without
   # touching link/border colors site-wide.
-  - source: "./quartz/plugins/graph-local"
+  - source: "@quartz-community/graph"
     enabled: true
     options:
       localGraph:
@@ -298,41 +298,6 @@ plugins:
     layout:
       position: footer
       priority: 50
-  # Homepage global graph — full vault map, only on index page
-  - source: "./quartz/plugins/graph-local"
-    enabled: true
-    options:
-      localGraph:
-        drag: true
-        zoom: true
-        depth: -1
-        scale: 1.1
-        repelForce: 0.58
-        centerForce: 0.3
-        linkDistance: 38
-        fontSize: 0.7
-        opacityScale: 1
-        removeTags: []
-        showTags: false
-        enableRadial: true
-      globalGraph:
-        drag: true
-        zoom: true
-        depth: -1
-        scale: 0.9
-        repelForce: 0.58
-        centerForce: 0.3
-        linkDistance: 38
-        fontSize: 0.7
-        opacityScale: 1
-        removeTags: []
-        showTags: false
-        focusOnHover: true
-        enableRadial: true
-    layout:
-      position: afterBody
-      priority: 5
-      condition: is-index
   - source: "@quartz-community/recent-notes"
     enabled: true
     options:

@@ -68,7 +68,7 @@ jobs:
 
       # Local plugin sources (./quartz/plugins/*) resolve through
       # .quartz/plugins symlinks that are gitignored; without this the build
-      # silently drops them (graph-local, link-notice). Same step as the
+      # silently drops them (link-notice). Same step as the
       # package.json prebuild hook, which `npx quartz build` does not fire.
       - name: Link local plugins
         run: npm run install-plugins
