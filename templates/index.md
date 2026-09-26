@@ -19,14 +19,14 @@ Welcome to my digital garden 🪴. This is a living collection of my working not
 [View my GitHub](https://github.com/nmdra) · [Connect on LinkedIn](https://www.linkedin.com/in/nimendra/) · [Follow me on X](https://x.com/nimendra_) · [Find me on Bluesky](https://bsky.app/profile/nimendra.xyz) · [Send me an email](mailto:nimendraonline@gmail.com)
 
 > [!quote]
-> “Creativity is just connecting things. When you ask creative people how they did something, they feel a little guilty because they didn’t really do it, they just saw something.” (Steve Jobs)
+> _“Creativity is just connecting things. When you ask creative people how they did something, they feel a little guilty because they didn’t really do it, they just saw something.”_ (Steve Jobs)
 > ― Sönke Ahrens, How to Take Smart Notes
 
 ---
 
 > [!tip] Wandering the garden
 >
-> - **Search** — press `Alt + /` or click the search icon
+> - **Search** — press `Ctrl + K` or click the search icon
 > - **Hover** any wikilink for a preview popup
 > - **Graph** — press `Ctrl + G` for the full vault map modal
 > - **Explorer** — browse folders in the left sidebar
