@@ -8,7 +8,7 @@ socialDescription: Welcome to my digital garden 🪴. These are my working notes
 
 Welcome to my digital garden 🪴. These are my working notes on cloud infrastructure, software engineering, systems, and AI, published as they grow.
 
-> [quote] “Creativity is just connecting things. When you ask creative people how they did something, they feel a little guilty because they didn’t really do it, they just saw something.” (Steve Jobs)”
+> [!quote] “Creativity is just connecting things. When you ask creative people how they did something, they feel a little guilty because they didn’t really do it, they just saw something.” (Steve Jobs)”
 > ― Sönke Ahrens, How to Take Smart Notes
 
 ### What's growing here
