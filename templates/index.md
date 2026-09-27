@@ -1,5 +1,6 @@
 ---
 title: Nimendra's Notes
+socialDescription: Welcome to my digital garden 🪴. These are my working notes on cloud infrastructure, software engineering, systems, and AI, published as they grow. Pick a topic below and see where it takes you.
 ---
 
 **To:** Explorers & Builders
