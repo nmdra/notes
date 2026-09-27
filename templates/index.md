@@ -6,9 +6,14 @@ socialDescription: Welcome to my digital garden 🪴. These are my working notes
 **To:** Explorers & Builders
 **From:** Nimendra
 
-Welcome to my digital garden 🪴. These are my working notes on cloud infrastructure, software engineering, systems, and AI, published as they grow. Pick a topic below and see where it takes you.
+Welcome to my digital garden 🪴. These are my working notes on cloud infrastructure, software engineering, systems, and AI, published as they grow.
 
-## What's growing here
+> [quote] “Creativity is just connecting things. When you ask creative people how they did something, they feel a little guilty because they didn’t really do it, they just saw something.” (Steve Jobs)”
+> ― Sönke Ahrens, How to Take Smart Notes
+
+### What's growing here
+
+Pick a topic below and see where it takes you.
 
 <nav class="home-topics" aria-label="Browse by topic">
   <a class="home-topic" href="/00.fleeting-notes/ai-llm/">
@@ -37,16 +42,16 @@ Welcome to my digital garden 🪴. These are my working notes on cloud infrastru
   </a>
 </nav>
 
-## Find your way
+### Find your way
 
 Use **Search** in the toolbar (`Ctrl/Cmd + K`) to look up a note, or open the **Explorer** to browse all published folders. Recently updated notes appear below this introduction.
 
-## Elsewhere
+### Elsewhere
 
 For longer-form writing, visit [my blog](https://blog.nimendra.online/). You can also find me on [GitHub](https://github.com/nmdra) or [LinkedIn](https://www.linkedin.com/in/nimendra/).
 
 Happy wandering,
 Nimendra
 
-> [!note]- About unpublished links
+> [!warning]- About unpublished links
 > Some notes refer to pages or documents that are not published here. Those links may show a notice instead of opening a page.
