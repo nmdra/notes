@@ -49,7 +49,8 @@ jobs:
           repository: nmdra/Second-Brain
           token: ${{ secrets.REPO_KEY }}
           path: vault
-          fetch-depth: 1
+          # Use vault history to recover each note's last commit date.
+          fetch-depth: 0
           # Never leave the private token in .git/config.
           persist-credentials: false
 

@@ -102,6 +102,51 @@ class Vault:
             else []
         )
         self.use_git = not entries
+        self._changed_files: set[str] | None = None
+
+    def modified_time(self, rel: str) -> float | None:
+        """Return the source note's latest commit time, or local mtime if dirty."""
+        disk = self.root / rel
+        source_mtime = disk.stat().st_mtime if disk.is_file() else None
+        if not self.git_dir.exists():
+            return source_mtime
+
+        if not self.use_git and rel in self._working_tree_changes():
+            return source_mtime
+
+        try:
+            timestamp = self._git(
+                ["log", "-1", "--format=%ct", "HEAD", "--", rel]
+            ).strip()
+            if timestamp:
+                return float(timestamp)
+        except subprocess.CalledProcessError:
+            pass
+        return source_mtime
+
+    def _working_tree_changes(self) -> set[str]:
+        if self._changed_files is None:
+            proc = subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    str(self.root),
+                    "status",
+                    "--porcelain=v1",
+                    "-z",
+                    "--untracked-files=all",
+                    "--no-renames",
+                ],
+                capture_output=True,
+                check=False,
+            )
+            self._changed_files = set()
+            if proc.returncode == 0:
+                for entry in proc.stdout.split(b"\0"):
+                    if entry:
+                        rel = entry[3:].decode("utf-8", errors="surrogateescape")
+                        self._changed_files.add(rel.replace(os.sep, "/"))
+        return self._changed_files
 
     def die(self, msg: str) -> "None":
         print(f"error: {msg}", file=sys.stderr)
@@ -274,6 +319,10 @@ def copy_into_content(vault: Vault, rel: str) -> bool:
     dest = CONTENT / rel
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_bytes(data)
+    if ext_of(rel) == NOTE_EXT:
+        modified_time = vault.modified_time(rel)
+        if modified_time is not None:
+            os.utime(dest, (modified_time, modified_time))
     return True
 
 
