@@ -1,0 +1,47 @@
+# Plan: Medium Zoom for note images
+
+## Goal
+
+Let readers enlarge images inside published notes with Medium Zoom, without changing linked images, the homepage, or site chrome. Keep zoom usable after Quartz SPA navigation and with keyboard, touch, light, and dark themes.
+
+## Current State
+
+- Quartz 5 uses a YAML plugin configuration (`quartz.config.yaml:1-7,300-307`) and already loads a local component plugin from `./quartz/plugins/link-notice` (`quartz/plugins/link-notice/package.json:1-33`). The build links local plugins using `npm run install-plugins` (`package.json:11-22`, `.github/workflows/deploy.yml:72-76`).
+- The component contract supports `.css` and `.afterDOMLoaded` (`quartz/components/types.ts:8-25`); the resource emitter collects and bundles those hooks (`quartz/plugins/emitters/componentResources.ts:37-70`). Quartz emits `nav` after SPA body replacement and calls `window.addCleanup` callbacks before it (`quartz/components/scripts/spa.inline.ts:38-44,78-133`). The official [component plugin guide](https://quartz.jzhao.xyz/advanced/creating-components#scripts-and-interactivity) also recommends `render` for content updated in place.
+- The existing site style targets `article img` (`quartz/styles/custom.scss:476-483`). The implementation pins `medium-zoom@1.1.0` in `package.json`, configures the local `image-zoom` plugin in `quartz.config.yaml`, and scopes targets to images inside rendered note Markdown. The homepage is generated from `templates/index.md` (`scripts/sync-content.py:393-397`), and the body exposes `data-slug` (`quartz/components/renderPage.tsx:349`).
+- The supplied [medium-zoom repository](https://github.com/francoischalifour/medium-zoom) is a JavaScript library, not a Quartz plugin. Its [README](https://github.com/francoischalifour/medium-zoom#usage) documents npm installation, selector-based attachment, `attach`/`detach`/`close`, themeable `background`, and automatic CSS injection. Upstream [source](https://github.com/francoischalifour/medium-zoom/blob/master/src/medium-zoom.js) opens on image clicks and closes on Escape; images do not gain keyboard focus/open behavior automatically. Its [CSS](https://github.com/francoischalifour/medium-zoom/blob/master/src/medium-zoom.css) uses transform transitions that `close()` waits to finish. The instance also installs document/window listeners and has no destroy API.
+- The official [Quartz plugin CLI](https://quartz.jzhao.xyz/cli/plugin#local-plugin-development) supports local plugins. This repository already uses a config-backed local plugin, so adapt the library through that pattern rather than trying to install the library repository itself with `quartz plugin add`.
+
+## Decisions
+
+- Create a **local Quartz component plugin** named `image-zoom`, using `quartz/plugins/link-notice` as the manifest/entry-point pattern. Add `medium-zoom@1.1.0` as a root runtime dependency with the lockfile updated. Do not load the library from a CDN or fork Quartz core.
+- Attach only to images under the article's rendered Markdown body. Filter out images inside links/listing cards, plus pages whose slug is `index` or starts with `tags/`. Do not exclude a page just because it has a folder listing: a real note with an `/index` slug can contain both Markdown images and child cards. Keep ordinary image clicks working when JavaScript is unavailable. Verify that emitted markup matches these selectors before wiring the handler.
+- Keep one Medium Zoom instance for the site lifetime because upstream exposes no destroy method for its document/window listeners. Attach the current note's images on `nav` and `render`, detach stale images, and synchronously finish an active close before SPA replacement. Avoid duplicate handlers after repeated renders. Mark Medium Zoom's injected stylesheet `data-persist` because Quartz removes non-persistent head styles during SPA navigation. Retain Escape requests issued during the opening transition, since Medium Zoom ignores close requests while animating. When zoom is active, close synchronously before Quartz's Ctrl/Cmd+K and Ctrl/Cmd+G shortcuts, without intercepting other browser shortcuts. Use a translucent `var(--light)` background with a 4px backdrop blur to match Quartz's search overlay, and a persistent stylesheet rule because Quartz's CSS optimizer drops the standard filter declaration. Add a top-right accessible close button and include it in the focus cycle.
+- Keep images operable from the keyboard: add focus/accessible button semantics to eligible images, open on Enter/Space, cycle focus between the zoomed image and close button, close on Escape or the button, and restore prior attributes/focus on cleanup. Preserve the original image `alt` text. Do not intercept a parent link.
+- Respect reduced motion without setting the image transition to `none`: upstream waits for `transitionend` to finish cleanup. Use a very short nonzero transition under `prefers-reduced-motion: reduce` and verify open/close and SPA cleanup in a browser.
+
+## Scope
+
+In scope: published note images, a local plugin adapter, dependency and config wiring, a blurred overlay, close control, focus styling, and browser lifecycle tests. Out of scope: gallery navigation, zoom for PDFs or video, modifying vault notes, adding external image hosts, and replacing Quartz's other overlays.
+
+## Tasks
+
+- [x] Add the pinned Medium Zoom runtime dependency and the local component plugin manifest/exports, following `link-notice`. Bundle the TypeScript client entry at plugin load time because the local-plugin loader does not process `.inline.ts`. Configure the plugin in the content layout and ensure `npm run install-plugins` links it in local builds and CI. **Seam:** Quartz plugin loader and component registry; **Files:** `package.json`, `package-lock.json`, `quartz/plugins/image-zoom/package.json`, `quartz/plugins/image-zoom/index.js`, `quartz/plugins/image-zoom/components/index.js`, `quartz/plugins/image-zoom/components/zoom.inline.ts`, `quartz/plugins/image-zoom/dist/index.d.ts`, `quartz.config.yaml`; **Verify:** `npm install` updated the lockfile, `npm run install-plugins` linked the plugin without warnings, and `npx quartz build` emitted its script.
+- [x] Implement image selection and lifecycle in a bundled `zoom.inline.ts`: select main article images only, ignore images inside links/listings and pages outside note content, attach on `nav`/`render`, and close/detach on Quartz cleanup before the next page. Make repeated `render` events idempotent and restore per-image attributes/listeners. **Seam:** emitted note-page DOM and Quartz `nav`/`render`/`window.addCleanup`; **Files:** `quartz/plugins/image-zoom/components/selection.js`, `quartz/plugins/image-zoom/components/selection.d.ts`, `quartz/plugins/image-zoom/components/selection.test.js`, `quartz/plugins/image-zoom/components/zoom.inline.ts`, `quartz/plugins/image-zoom/components/index.js`; **Verify:** unit tests and browser regression verified filtering, repeated `render`, linked images, note → note → folder → back, and cleanup while zoomed.
+- [x] Add a theme-aware blurred overlay, top-right close button, visible focus treatment, keyboard Enter/Space to open, Escape/click-outside/button close, and reduced-motion timing compatible with Medium Zoom's `transitionend` cleanup. **Seam:** plugin CSS and image keyboard events; **Files:** `quartz/plugins/image-zoom/components/index.js`, `quartz/plugins/image-zoom/components/zoom.inline.ts`; **Verify:** Playwright tested keyboard Enter/Space, focus cycling between image and close button, Escape/button/backdrop close, a 4px blur matching the search overlay, touch at 320px, both themes, and desktop layering.
+- [x] Verify the generated plugin script and run browser regression scenarios with a real note image, a linked image, a folder page, and SPA navigation. Check `render` twice on one note, then navigate away while zoomed and back; confirm no duplicate handlers, overlays, or hidden images remain. **Seam:** emitted `public/` pages served locally with Playwright CLI; **Files:** no source changes, record any defects and fixes in the plugin files from tasks 2–3; **Verify:** `npm test -- 'quartz/**/*.test.{ts,js}'` (168 tests), `npx tsc --noEmit`, `npx quartz build`, and the browser scenarios all passed.
+
+## Verification
+
+- Run `npx tsc --noEmit`, the scoped site and Python tests, `npm run install-plugins`, and a local Quartz build. Confirm CI's local-plugin step still succeeds (`.github/workflows/deploy.yml:72-76,122-134`).
+- On the built site, inspect a real note with an image and confirm a click or Enter/Space opens one zoom; Escape, clicking the backdrop, and SPA navigation close it cleanly. Verify linked images still follow their links and note-less homepage/folder/tag pages have no zoom targets.
+- Check 320px and desktop, light and dark, with `prefers-reduced-motion: reduce` enabled. Confirm image `alt` text is preserved, focus is visible/trapped, and repeated SPA navigations leave no duplicate listeners or overlays. Touch, keyboard, reduced motion, themes, SPA cleanup, and close-before-Search/Graph shortcuts were verified in Playwright.
+
+## Reference Docs
+
+https://quartz.jzhao.xyz/advanced/making-plugins - Quartz Plugin Guide
+https://quartz.jzhao.xyz/cli/plugin - Plugin Usage Guide
+
+## Open Questions
+
+None. The user chose note images only and a separate plan file; the requested integration is a custom local Quartz plugin around the supplied Medium Zoom library.

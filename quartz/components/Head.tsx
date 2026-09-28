@@ -104,6 +104,15 @@ export default (() => {
             return resource
           }
         })}
+      
+        
+      
+        <script dangerouslySetInnerHTML={{ __html: `
+          if (!localStorage.getItem("theme")) {
+            localStorage.setItem("theme", "dark");
+            document.documentElement.setAttribute("saved-theme", "dark");
+          }
+        ` }} />
       </head>
     )
   }

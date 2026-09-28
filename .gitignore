@@ -12,3 +12,13 @@ replit.nix
 .quartz/
 quartz/cli/tui/dist/
 .turbo/
+
+# content/ is never tracked: it is produced from the (private) Obsidian vault
+# by scripts/sync-content.py, locally for preview and by CI for every deploy.
+# The sync script only ever copies what publish.list allows, and both the local
+# run and the CI run are gated on document-shaped files.
+# Run ./scripts/sync-content.py before `npx quartz build` to refresh it.
+content/
+
+# playwright-cli session output (snapshots, screenshots)
+.playwright-cli/

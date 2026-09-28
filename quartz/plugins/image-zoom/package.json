@@ -1,0 +1,44 @@
+{
+  "name": "image-zoom",
+  "version": "1.0.0",
+  "description": "Medium Zoom for note images in Quartz",
+  "type": "module",
+  "license": "MIT",
+  "author": "Nimendra",
+  "keywords": [
+    "quartz",
+    "quartz-plugin",
+    "images",
+    "zoom"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./index.js"
+    },
+    "./components": {
+      "import": "./components/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "quartz": {
+    "name": "image-zoom",
+    "displayName": "Image Zoom",
+    "category": "component",
+    "version": "1.0.0",
+    "quartzVersion": ">=5.0.0",
+    "dependencies": [],
+    "defaultOrder": 100,
+    "defaultEnabled": true,
+    "components": {
+      "ImageZoom": {
+        "displayName": "Image Zoom",
+        "defaultPosition": "afterBody",
+        "defaultPriority": 110
+      }
+    }
+  }
+}

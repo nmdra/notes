@@ -1,0 +1,19 @@
+# Folders to publish, one vault-relative path per line.
+# Lines starting with # are comments. Sub-paths are supported.
+# A line starting with ! excludes that folder, and wins over any include.
+# Adding a line here is the only change needed to publish more (or fewer) notes.
+
+00.Fleeting Notes/AI-LLM
+00.Fleeting Notes/System Perfomance
+01.Projects/Database Engineering/Redis
+00.Fleeting Notes/Site Reliability Engineering/Observebility
+02.Areas/DevOps/Docker
+02.Areas/Software Engineering/gRPC
+02.Areas/Software Engineering/Go Notes/Learning Go
+02.Areas/Kubernetes/K8s-Primer
+02.Areas/Platform Engineering
+02.Areas/DevOps/CaC & IaC
+05.Books
+
+# kept private
+!02.Areas/Platform Engineering/Effective Platform Engineering

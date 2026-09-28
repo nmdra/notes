@@ -365,6 +365,13 @@ export function renderPage(
             ]}
           </Body>
         </div>
+        {cfg.analytics?.provider === "cloudflare" && (
+          <script
+            type="module"
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon={JSON.stringify({ token: cfg.analytics.token })}
+          ></script>
+        )}
       </body>
       {pageResources.js
         .filter((resource) => resource.loadTime === "afterDOMReady")

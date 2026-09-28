@@ -1,0 +1,173 @@
+name: Deploy Quartz site to GitHub Pages
+
+on:
+  push:
+    branches:
+      - v5
+
+  schedule:
+    # Monday + Thursday at 22:00 Sri Lanka time (16:30 UTC)
+    - cron: "30 16 * * 1,4"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out Quartz
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          # Keep git history for note dates.
+          fetch-depth: 0
+          persist-credentials: false
+
+      # The vault is private. REPO_KEY is a PAT with read access to
+      # nmdra/Second-Brain; without it CI has no source to publish from, so
+      # fail before checkout produces its own opaque error.
+      - name: Check vault credentials
+        env:
+          REPO_KEY: ${{ secrets.REPO_KEY }}
+        run: |
+          if [ -z "$REPO_KEY" ]; then
+            echo "::error::REPO_KEY is not set — CI cannot read nmdra/Second-Brain"
+            exit 1
+          fi
+
+      - name: Check out vault
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: nmdra/Second-Brain
+          token: ${{ secrets.REPO_KEY }}
+          path: vault
+          # Use vault history to recover each note's last commit date.
+          fetch-depth: 0
+          # Never leave the private token in .git/config.
+          persist-credentials: false
+
+      # content/ is written here, not trusted from the push: sync-content.py
+      # copies only what publish.list allows and only allowlisted extensions.
+      - name: Sync published notes
+        run: ./scripts/sync-content.py --vault vault
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Local plugin sources (./quartz/plugins/*) resolve through
+      # .quartz/plugins symlinks that are gitignored; without this the build
+      # silently drops them (link-notice). Same step as the
+      # package.json prebuild hook, which `npx quartz build` does not fire.
+      - name: Link local plugins
+        run: npm run install-plugins
+
+      # Use the sync script's blocked-extension policy for both safety gates.
+      - name: Check synced content
+        run: python3 scripts/check-blocked-files.py content
+
+      - name: Check types and tests
+        run: |
+          set -euo pipefail
+          npx tsc --noEmit
+          # Test site code, not files checked out from the private vault.
+          npm test -- 'quartz/**/*.test.{ts,js}'
+          python3 -m unittest discover -s scripts -p 'test_*.py'
+
+      - name: Build Quartz
+        run: |
+          set -euo pipefail
+          npx quartz build 2>&1 | tee "$RUNNER_TEMP/build.log"
+
+      # Quartz exits 0 even when it globs nothing, so every gate below stays
+      # green and an empty site ships. That has happened once (content/ was
+      # git-ignored, and the globber honours .gitignore). Refuse it here.
+      - name: Validate build
+        run: |
+          set -euo pipefail
+
+          if grep -qE "Found 0 input files|Parsed 0 Markdown files" "$RUNNER_TEMP/build.log"; then
+            echo "::error::Quartz parsed no notes — refusing to deploy"
+            grep -E "Found|Parsed|Emitted" "$RUNNER_TEMP/build.log" || true
+            exit 1
+          fi
+
+          if ! grep -qE "Parsed [1-9][0-9]* Markdown files" "$RUNNER_TEMP/build.log"; then
+            echo "::error::Could not confirm that Quartz parsed Markdown files"
+            exit 1
+          fi
+
+          public_files=$(find public -type f | wc -l)
+
+          if [ "$public_files" -eq 0 ]; then
+            echo "::error::public/ is empty — refusing to deploy"
+            exit 1
+          fi
+
+          if [ ! -s public/llms.txt ] || \
+            ! cmp -s templates/llms.txt public/llms.txt; then
+            echo "::error::Root llms.txt is missing or differs from template"
+            exit 1
+          fi
+
+          echo "Build validated: $public_files generated files"
+
+      # Local plugins load silently-but-fully when their .quartz symlinks are
+      # missing: the build stays green and the component just vanishes from
+      # the site. Probe the emitted bundle and pages for expected components.
+      - name: Local-plugin gate
+        run: |
+          set -euo pipefail
+          if ! grep -rq "hasn't been published" public --include="*.js"; then
+            echo "::error::link-notice script missing from bundle — local plugin not loaded"
+            exit 1
+          fi
+          if ! grep -rq "Graph View" public --include="*.html"; then
+            echo "::error::graph component missing from pages — local plugin not loaded"
+            exit 1
+          fi
+          if ! grep -rq "medium-zoom-overlay" public --include="*.js"; then
+            echo "::error::image-zoom script missing from bundle"
+            exit 1
+          fi
+          echo "local plugins present"
+
+      # Catch files copied by Quartz or plugins despite the sync allowlist.
+      - name: Check generated site
+        run: python3 scripts/check-blocked-files.py public
+
+      - name: Upload Pages artifact
+        # actions/upload-pages-artifact v3
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

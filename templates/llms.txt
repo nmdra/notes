@@ -1,0 +1,25 @@
+# Nimendra's Notes
+
+> A public digital garden of working notes on cloud infrastructure, software engineering, systems, and AI. Notes change as I learn.
+
+These are personal notes, not a complete reference or a finished course. Some notes link to unpublished pages or documents. Use the published pages linked below to browse the site.
+
+## Start here
+
+- [Home](https://notes.nimendra.online/): Overview, topic links, and recently updated notes.
+- [Tags](https://notes.nimendra.online/tags/): Browse published notes by tag.
+- [Sitemap](https://notes.nimendra.online/sitemap.xml): Index of published pages for finding a specific note.
+
+## Topics
+
+- [AI and LLMs](https://notes.nimendra.online/00.fleeting-notes/ai-llm/): Notes on agents, language models, and practical AI systems.
+- [Infrastructure as code](https://notes.nimendra.online/02.areas/devops/cac--and--iac/): Notes on provisioning and configuration management.
+- [Docker](https://notes.nimendra.online/02.areas/devops/docker/): Containers, images, networking, and storage.
+- [Kubernetes](https://notes.nimendra.online/02.areas/kubernetes/k8s-primer/): Cluster concepts and hands-on learning.
+- [Platform engineering](https://notes.nimendra.online/02.areas/platform-engineering/): Internal platforms, developer experience, and related tools.
+- [Go and software engineering](https://notes.nimendra.online/02.areas/software-engineering/go-notes/): Go language notes and software engineering fundamentals.
+- [gRPC](https://notes.nimendra.online/02.areas/software-engineering/grpc/): Remote procedure calls, Protocol Buffers, and communication patterns.
+- [Redis](https://notes.nimendra.online/01.projects/database-engineering/redis/): Data structures, messaging, clustering, and persistence.
+- [Reliability and observability](https://notes.nimendra.online/00.fleeting-notes/site-reliability-engineering/): Notes on operating and understanding production systems.
+- [System performance](https://notes.nimendra.online/00.fleeting-notes/system-perfomance/): Performance methods, Linux internals, and measurement tools.
+- [Books](https://notes.nimendra.online/05.books/): Reading notes across technology, learning, and other subjects.

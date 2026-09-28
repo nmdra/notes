@@ -1,3 +1,913 @@
 @use "./variables.scss" as *;
+@use "./catppuccin.scss";
+@use "./callouts_catppuccin.scss";
 
 // put your custom CSS here!
+
+// ---------------------------------------------------------------------------
+// No highlighting
+//
+// Two things were visually noisy on every page:
+//   1. `==like this==` in the notes renders as a background mark. Quartz ships
+//      it as --textHighlight (a saturated yellow); the Catppuccin theme
+//      re-exports it as --text-highlight-bg (rosewater). Both are killed here
+//      so the mark keeps its text and loses its colour.
+//   2. every internal link got a background pill from base.scss
+//      (`a.internal { background-color: var(--highlight) }`), which made
+//      clickable links stand out from the prose.
+//
+// `!important` is required: the theme's variables are emitted into
+// static/resource-style-*.css, which is linked after this file.
+// ---------------------------------------------------------------------------
+:root {
+  --textHighlight: transparent !important;
+  --text-highlight-bg: transparent !important;
+}
+
+// The theme also ships an unlayered fallback (`body a.internal-link {
+// background-color: rgb(from var(--highlight) r g b / 0.3)`) which resolves to
+// 30% black once --text-highlight-bg above forces --highlight to transparent,
+// so this needs html body to out-specify it. Tag links keep their chips.
+html body a.internal:not(.tag-link),
+html body a.internal-link:not(.tag-link) {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+// Prose links need an affordance beyond color; card and tag links have borders.
+article a:not(.tag-link):not(.home-topic) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
+
+// Links whose target is not published are styled as disabled/dimmed text using
+// Catppuccin overlay colors and marked with a red warning suffix.
+a.internal.broken:not(.tag-link):not(.home-topic),
+a.internal.broken:not(.tag-link):not(.home-topic):hover {
+  opacity: 1; /* override base.scss 50% opacity */
+  color: var(--ctp-macchiato-subtext1) !important;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+}
+a.internal.broken:not(.tag-link)::after {
+  content: " (not published)";
+  color: var(--ctp-mocha-red);
+  font-size: 0.85em;
+  margin-left: 0.2rem;
+}
+
+:root:not([saved-theme="dark"]) a.internal.broken:not(.tag-link):not(.home-topic),
+:root:not([saved-theme="dark"]) a.internal.broken:not(.tag-link):not(.home-topic):hover {
+  color: var(--ctp-latte-subtext1) !important;
+}
+:root:not([saved-theme="dark"]) a.internal.broken:not(.tag-link)::after {
+  color: var(--ctp-latte-red);
+}
+
+// ---------------------------------------------------------------------------
+// Tags as chips — soft Catppuccin surfaces, with separate light/dark tokens.
+// The same link appears inline, in listings, on tag pages, and in note properties.
+// ---------------------------------------------------------------------------
+:root {
+  --tag-bg: var(--ctp-latte-mantle);
+  --tag-text: var(--ctp-latte-text);
+  --tag-border: var(--ctp-latte-surface0);
+  --tag-hover-bg: var(--ctp-latte-surface0);
+  --tag-focus: var(--secondary);
+}
+
+:root[saved-theme="dark"] {
+  --tag-bg: var(--ctp-macchiato-surface0);
+  --tag-text: var(--ctp-macchiato-text);
+  --tag-border: var(--ctp-macchiato-surface1);
+  --tag-hover-bg: var(--ctp-macchiato-surface1);
+  --tag-focus: var(--secondary);
+}
+
+a.tag-link,
+body .note-properties .note-properties-tags .tag-link {
+  display: inline-flex;
+  opacity: 1;
+  align-items: center;
+  max-width: 100%;
+  padding: 0.15rem 0.65rem;
+  border: 1px solid var(--tag-border);
+  border-radius: 999px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  font-size: 0.85em;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+a.tag-link::before,
+body .note-properties .note-properties-tags .tag-link::before {
+  color: inherit;
+  margin-right: 0.1rem;
+}
+
+a.tag-link:hover,
+body .note-properties .note-properties-tags .tag-link:hover {
+  background: var(--tag-hover-bg);
+  border-color: var(--tag-focus);
+  color: var(--tag-text);
+}
+
+a.tag-link:focus-visible,
+body .note-properties .note-properties-tags .tag-link:focus-visible {
+  outline: 2px solid var(--tag-focus);
+  outline-offset: 2px;
+}
+
+// Generated tag pages are not source slugs, so they can inherit `.broken`.
+// They still have real destinations and must retain chip contrast.
+a.internal.tag-link.broken {
+  color: var(--tag-text);
+  opacity: 1;
+}
+
+// ---------------------------------------------------------------------------
+// Graph nodes — Catppuccin Frappé in light mode
+//
+// The graph reads --graph-node-current / --graph-node-neighbor /
+// --graph-node-other from :root and falls back to --secondary / --tertiary /
+// --gray, so only these three are set, and only in light mode: dark mode keeps
+// the theme's Macchiato values untouched.
+//
+// Frappé on the light surface (#eff1f5): blue = the focused note, mauve = its
+// neighbours and tags, overlay0 = everything else — three distinct hues instead
+// of the two identical periwinkles --secondary/--tertiary gave us. Links,
+// borders and chips keep var(--secondary), so the rest of the site is unaffected.
+// ---------------------------------------------------------------------------
+:root:not([saved-theme="dark"]) {
+  --graph-node-current: #8caaee; // frappé blue
+  --graph-node-neighbor: #ca9ee6; // frappé mauve
+  --graph-node-other: #737994; // frappé overlay0
+  --hero-accent: var(--ctp-latte-mauve); // readable accent on the light surface
+  --graph-link: #b5bfe2; // frappé subtle surface tone for balanced link lines
+}
+
+:root[saved-theme="dark"] {
+  --hero-accent: var(--ctp-macchiato-mauve);
+  --graph-link: #545872; // macchiato subtle surface tone for balanced link lines
+}
+
+// ---------------------------------------------------------------------------
+// Search overlay — opaque panels (both themes)
+//
+// The theme ships rules (`html[saved-theme="light"|"dark"] body .search >
+// .search-container > .search-space > *`, `.search-layout > .results-container`,
+// `.search-layout > .preview-container`, `.result-card`, …) that blank the
+// plugin's `background: var(--light)` back to rgba(0,0,0,0), so results and the
+// preview float on a blurred page and are unreadable. Those rules are unlayered
+// and load after this file, so the surfaces are restated with !important:
+// a scrim behind the whole overlay, and solid input + panel backgrounds.
+// `--light` is the surface color in both modes (dark surface in dark mode).
+// ---------------------------------------------------------------------------
+.search > .search-container {
+  background-color: color-mix(in srgb, var(--light) 82%, transparent) !important;
+}
+
+.search > .search-container > .search-space > input,
+.search > .search-container > .search-space > .search-layout,
+.search > .search-container > .search-space > .search-layout > * {
+  background-color: var(--light) !important;
+}
+
+.search
+  > .search-container
+  > .search-space
+  > .search-layout
+  > .results-container
+  .result-card:hover,
+.search
+  > .search-container
+  > .search-space
+  > .search-layout
+  > .results-container
+  .result-card:focus,
+.search
+  > .search-container
+  > .search-space
+  > .search-layout
+  > .results-container
+  .result-card.focus {
+  background-color: var(--lightgray) !important;
+}
+
+// ---------------------------------------------------------------------------
+// Listing pages (tags, folders) — note cards in a responsive grid
+// ---------------------------------------------------------------------------
+ul.section-ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding-left: 0;
+  margin-top: 1.5rem;
+}
+
+li.section-li {
+  margin: 0;
+
+  & > .section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--lightgray);
+    border-radius: 10px;
+    background: var(--light);
+    height: 100%;
+    transition:
+      border-color 0.2s ease,
+      transform 0.15s ease,
+      box-shadow 0.2s ease;
+
+    &:hover,
+    &:focus-within {
+      border-color: var(--tertiary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--secondary);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .meta {
+    margin: 0;
+    font-size: 0.8em;
+    color: var(--darkgray);
+    order: -1;
+  }
+
+  .desc h3 {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: auto;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+@media all and (max-width: 600px) {
+  ul.section-ul {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Tag index — tag headings flow as a pill cloud instead of stacking as
+// block headings (the a.tag-link pill itself is styled above)
+// ---------------------------------------------------------------------------
+h2:has(> a.tag-link) {
+  display: inline-block;
+  margin: 0.3rem 0.2rem;
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+// ---------------------------------------------------------------------------
+// Homepage topic directory — every card is an actual link, not a disclosure.
+// Quartz marks generated folder pages as broken because they are not source
+// slugs, even though those routes exist. LinkNotice allows these verified cards.
+// ---------------------------------------------------------------------------
+body[data-slug="index"] {
+  .home-topics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: 0.85rem;
+    margin: 1.25rem 0 2rem;
+  }
+
+  a.home-topic.internal {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--lightgray);
+    border-radius: 10px;
+    background: var(--light);
+    color: var(--darkgray);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    transition:
+      border-color 0.15s ease,
+      background-color 0.15s ease;
+
+    strong {
+      color: var(--secondary);
+      font-size: 1rem;
+    }
+
+    span {
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--secondary);
+      background: color-mix(in srgb, var(--secondary) 5%, var(--light));
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--secondary);
+      outline-offset: 2px;
+    }
+  }
+
+  // Folder routes exist; suppress the false "not published" indicator.
+  a.home-topic.internal.broken {
+    opacity: 1;
+
+    &::after {
+      display: none;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Homepage hero — gradient title with a shimmering separator
+// ---------------------------------------------------------------------------
+body[data-slug="index"] {
+  .popover-hint h1 {
+    position: relative;
+    padding-bottom: 0.65rem;
+    color: var(--dark); // fallback if gradient text is unavailable
+    font-size: clamp(1.65rem, 4vw, 2.2rem);
+    margin-bottom: 0.3rem;
+
+    @supports (background-clip: text) {
+      background: linear-gradient(135deg, var(--secondary), var(--hero-accent));
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .popover-hint h1::after {
+    content: "🪴";
+    margin-left: 0.12em;
+    color: var(--dark);
+    background: none;
+    -webkit-text-fill-color: initial;
+    font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+    font-size: 0.85em;
+  }
+
+  .popover-hint h1::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(
+      90deg,
+      var(--secondary),
+      var(--hero-accent, var(--tertiary)),
+      var(--secondary)
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Callouts — rounded corners and subtle shadow on hover across all pages
+// ---------------------------------------------------------------------------
+.callout {
+  border-radius: 10px;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Recent notes on the homepage — section heading and card rows
+// ---------------------------------------------------------------------------
+body[data-slug="index"] .recent-notes {
+  margin-top: 1.5rem;
+
+  > h3 {
+    color: var(--secondary);
+    font-size: 1.1rem;
+    border-bottom: 2px solid var(--lightgray);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .recent-ul > li {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--lightgray);
+    border-radius: 8px;
+    margin-bottom: 0.6rem;
+    transition: border-color 0.2s ease;
+
+    &:hover,
+    &:focus-within {
+      border-color: var(--tertiary);
+    }
+
+    a:focus-visible {
+      outline: 2px solid var(--secondary);
+      outline-offset: 2px;
+    }
+
+    .section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .meta {
+      font-size: 0.8em;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reading polish — rules, images, code blocks
+// ---------------------------------------------------------------------------
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--lightgray) 20%,
+    var(--lightgray) 80%,
+    transparent
+  );
+  margin: 2rem 0;
+}
+
+article img {
+  border-radius: 6px;
+  border: 1px solid var(--lightgray);
+}
+
+pre {
+  border-top: 2px solid var(--tertiary);
+  border-radius: 0 0 6px 6px;
+}
+
+// ---------------------------------------------------------------------------
+// Explorer — bold folder titles, marked active page
+// ---------------------------------------------------------------------------
+.explorer {
+  .folder-title {
+    font-weight: 600;
+    color: var(--dark);
+  }
+
+  a.active {
+    color: var(--tertiary);
+    font-weight: 600;
+    border-left: 2px solid var(--tertiary);
+    padding-left: 0.4rem;
+  }
+
+  // parity with file rows: folders get the same hover pill
+  .folder-container {
+    border-radius: 6px;
+    transition: background-color 120ms ease;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--dark) 7%, transparent);
+    }
+  }
+
+  // roomier rows for wrapped two-line titles
+  .folder-container,
+  a.nav-file-title {
+    line-height: 1.35;
+    padding-block: 3px;
+  }
+
+  a.nav-file-title:focus-visible,
+  .folder-button:focus-visible {
+    outline: 2px solid var(--tertiary);
+    outline-offset: 1px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Wider content column on large screens
+// ---------------------------------------------------------------------------
+@media all and (min-width: 1400px) {
+  .center {
+    max-width: 850px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Right sidebar — TOC and graph
+//
+// Keep the TOC header visible while its list scrolls. On desktop, let the TOC
+// use the remaining sidebar height and keep the graph at its configured size.
+// If the viewport is too short, the sidebar itself scrolls instead of clipping
+// the graph. Backlinks live below the article, outside this fixed-height column.
+// ---------------------------------------------------------------------------
+.sidebar.right .toc .toc-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+.sidebar.right .toc:has(> .toc-header.collapsed) {
+  flex: 0 1 auto;
+}
+
+.sidebar.right .toc .toc-content.collapsed {
+  display: none;
+}
+
+.sidebar.right {
+  .toc > .toc-header,
+  .graph > h3 {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--darkgray);
+    margin-top: 0;
+    margin-bottom: 0.4rem;
+  }
+
+  .toc > .toc-header {
+    padding-block: 0.2rem;
+    border-radius: 6px;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--dark) 6%, transparent);
+    }
+  }
+
+  .graph {
+    padding-top: 1rem;
+    border-top: 1px solid var(--lightgray);
+  }
+
+  .toc .toc-content.overflow > li > a {
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.35;
+    padding-block: 0.15rem;
+
+    &.in-view {
+      opacity: 1;
+      color: var(--secondary);
+    }
+  }
+
+  .graph > .graph-outer {
+    border-radius: 8px;
+  }
+}
+
+@media all and (min-width: 1201px) {
+  .sidebar.right {
+    min-height: 0;
+    overflow-y: auto;
+
+    & > .toc {
+      flex: 1 1 0;
+      min-height: 8rem;
+    }
+
+    & > .toc:has(> .toc-header.collapsed) {
+      min-height: 2rem;
+    }
+
+    .toc .toc-content.overflow {
+      min-height: 0;
+    }
+
+    & > .graph {
+      flex: 0 0 auto;
+    }
+  }
+}
+
+// DefaultFrame already places an <hr> between the article and its afterBody
+// components, so backlinks inherit the footer divider and add only section gap.
+.page-footer .backlinks {
+  margin-top: 1.5rem;
+
+  & > h3 {
+    margin: 0 0 0.4rem;
+    color: var(--darkgray);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  & > ul.overflow {
+    max-height: none;
+    overflow: visible;
+  }
+
+  & > ul.overflow > li > a {
+    display: block;
+    padding: 0.25rem 0.5rem;
+    margin-left: -0.5rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.35;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--dark) 6%, transparent);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Toast for clicks on unpublished (broken) links and blocked documents
+// ---------------------------------------------------------------------------
+#link-notice {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1100;
+  max-width: min(90vw, 30rem);
+  padding: 0.6rem 0.95rem;
+  border: 1px solid color-mix(in srgb, var(--dark) 18%, transparent);
+  border-radius: 8px;
+  background-color: var(--light);
+  color: var(--dark);
+  box-shadow: 0 6px 24px color-mix(in srgb, var(--dark) 22%, transparent);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+
+  &.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Popovers — card-style hover previews
+// ---------------------------------------------------------------------------
+.popover {
+  border-radius: 10px;
+  border: 1px solid var(--lightgray);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+
+  > .popover-inner {
+    border: none;
+    padding: 0.8rem 1rem;
+  }
+
+  h1 {
+    font-size: 1.1rem;
+    margin-top: 0;
+    margin-bottom: 0.4rem;
+    color: var(--secondary);
+  }
+
+  p {
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Blockquotes — gradient left border, subtle background
+// ---------------------------------------------------------------------------
+blockquote {
+  border-left: 3px solid var(--secondary);
+  border-image: linear-gradient(to bottom, var(--secondary), var(--tertiary)) 1;
+  background: color-mix(in srgb, var(--lightgray) 30%, transparent);
+  padding: 0.6rem 1rem;
+  border-radius: 0 6px 6px 0;
+}
+
+// ---------------------------------------------------------------------------
+// Tables — alternating rows, hover, rounded container
+// ---------------------------------------------------------------------------
+.table-container {
+  border: 1px solid var(--lightgray);
+  border-radius: 8px;
+  overflow: hidden;
+
+  > table {
+    margin: 0;
+    width: 100%;
+
+    th {
+      background: color-mix(in srgb, var(--lightgray) 60%, transparent);
+      font-size: 0.9em;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:nth-child(even) {
+      background: color-mix(in srgb, var(--lightgray) 25%, transparent);
+    }
+
+    tr:hover {
+      background: color-mix(in srgb, var(--tertiary) 8%, transparent);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Footer — subtle separator, compact links
+// ---------------------------------------------------------------------------
+footer {
+  border-top: 1px solid var(--lightgray);
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+
+  p {
+    font-size: 0.82rem;
+    color: var(--darkgray);
+  }
+
+  a {
+    font-weight: 500;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--tertiary);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// SPA page transition — fade in content
+// ---------------------------------------------------------------------------
+article {
+  animation: fadeInUp 0.25s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Inline code — subtle outline, better contrast
+// ---------------------------------------------------------------------------
+code:not(pre code) {
+  border: 1px solid color-mix(in srgb, var(--gray) 40%, transparent);
+  padding: 0.15rem 0.35rem;
+}
+
+// ---------------------------------------------------------------------------
+// Mobile top bar — cleaner spacing, subtle bottom border
+// ---------------------------------------------------------------------------
+@media all and (max-width: 800px) {
+  .sidebar.left {
+    border-bottom: 1px solid var(--lightgray);
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .page-title {
+    font-size: 1rem;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Breadcrumbs — quieter, muted trail
+// ---------------------------------------------------------------------------
+.breadcrumb-container {
+  font-size: 0.82rem;
+  color: var(--darkgray);
+  margin-bottom: 0.5rem;
+
+  a {
+    font-weight: 500;
+    color: var(--darkgray);
+
+    &:hover {
+      color: var(--secondary);
+    }
+  }
+
+  .breadcrumb-element:not(:last-child)::after {
+    opacity: 0.4;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Content meta — date and reading time
+// ---------------------------------------------------------------------------
+.content-meta {
+  font-size: 0.82rem;
+  color: var(--darkgray);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--lightgray);
+  margin-bottom: 1.5rem;
+}
+
+// ---------------------------------------------------------------------------
+// Reduced motion — preserve state changes without decorative movement.
+// ---------------------------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  body[data-slug="index"] .popover-hint h1::before,
+  article {
+    animation: none;
+  }
+
+  li.section-li > .section:hover,
+  li.section-li > .section:focus-within {
+    transform: none;
+  }
+
+  .home-topic,
+  .tag-link,
+  li.section-li > .section,
+  .recent-notes .recent-ul > li,
+  .callout,
+  .popover,
+  #link-notice {
+    transition: none !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Custom scrollbar — matches Catppuccin surface
+// ---------------------------------------------------------------------------
+:root[saved-theme="dark"] {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--gray) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--gray);
+    border-radius: 3px;
+
+    &:hover {
+      background: var(--darkgray);
+    }
+  }
+}
