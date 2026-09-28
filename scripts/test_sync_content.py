@@ -38,6 +38,9 @@ class SyncContentDatesTest(unittest.TestCase):
         self.publish_list.write_text("Notes\n", encoding="utf-8")
         self.homepage = self.root / "index.md"
         self.homepage.write_text("Home\n", encoding="utf-8")
+        self.llms_txt = self.root / "llms.txt"
+        self.llms_txt.write_text("# Test site\n", encoding="utf-8")
+        setattr(SYNC, "LLMS_TXT", self.llms_txt)
         setattr(SYNC, "CONTENT", self.content)
         setattr(SYNC, "PUBLISH_LIST", self.publish_list)
         setattr(SYNC, "HOME_PAGE", self.homepage)
@@ -62,6 +65,20 @@ class SyncContentDatesTest(unittest.TestCase):
         with patch.object(sys, "argv", args):
             self.assertEqual(getattr(SYNC, "main")(), 0)
         return self.content / "Notes" / "The Bitter Lesson.md"
+
+    def test_sync_copies_llms_txt_to_content_root(self):
+        self._sync()
+
+        self.assertEqual(
+            (self.content / "llms.txt").read_text(encoding="utf-8"),
+            self.llms_txt.read_text(encoding="utf-8"),
+        )
+
+    def test_sync_fails_when_llms_txt_is_missing(self):
+        self.llms_txt.unlink()
+        args = ["sync-content.py", "--vault", str(self.vault), "--quiet"]
+        with patch.object(sys, "argv", args):
+            self.assertEqual(getattr(SYNC, "main")(), 1)
 
     def test_clean_note_uses_latest_vault_commit_time(self):
         timestamp = "2025-02-03T04:05:06+00:00"

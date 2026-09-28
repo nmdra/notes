@@ -33,6 +33,7 @@ ROOT = Path(__file__).resolve().parent.parent
 PUBLISH_LIST = ROOT / "publish.list"
 CONTENT = ROOT / "content"
 HOME_PAGE = ROOT / "templates" / "index.md"
+LLMS_TXT = ROOT / "templates" / "llms.txt"
 
 NOTE_EXT = ".md"
 # allowlist: nothing outside this set ever leaves the vault
@@ -442,6 +443,12 @@ def main() -> int:
         shutil.copyfile(HOME_PAGE, CONTENT / "index.md")
     else:
         print(f"warning: {HOME_PAGE} missing, no homepage written", file=sys.stderr)
+
+    # Quartz's Assets emitter copies non-Markdown content files to the site root.
+    if not LLMS_TXT.is_file():
+        print(f"error: {LLMS_TXT} missing, no llms.txt to publish", file=sys.stderr)
+        return 1
+    shutil.copyfile(LLMS_TXT, CONTENT / "llms.txt")
 
     if not args.quiet:
         print_report(report, includes, excludes, vault)

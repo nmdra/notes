@@ -117,6 +117,12 @@ jobs:
             exit 1
           fi
 
+          if [ ! -s public/llms.txt ] || \
+            ! cmp -s templates/llms.txt public/llms.txt; then
+            echo "::error::Root llms.txt is missing or differs from template"
+            exit 1
+          fi
+
           echo "Build validated: $public_files generated files"
 
       # Local plugins load silently-but-fully when their .quartz symlinks are

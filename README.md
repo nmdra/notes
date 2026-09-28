@@ -34,6 +34,10 @@ The workflow never reads `content/` from the push — it is regenerated on every
 deploy, so a stale or hand-edited copy cannot go live. Running the sync locally
 (before `npx quartz build`) keeps your preview identical to what CI publishes.
 
+The sync also copies `templates/llms.txt` to `content/llms.txt`. Quartz copies it to
+`public/llms.txt` without a plugin. Edit the template to change the site overview.
+The sitemap lists the published pages. CI checks that the root file matches the template.
+
 ## Local preview
 
 ```bash
@@ -50,6 +54,7 @@ npx quartz build --serve         # http://localhost:8080
 | `scripts/sync-content.py`      | vault → `content/` sync, extension allowlist, report  |
 | `content/`                     | generated from the vault, never committed             |
 | `templates/index.md`           | homepage source                                       |
+| `templates/llms.txt`           | static agent-facing site overview                     |
 | `quartz.config.yaml`           | site config: baseUrl, plugins, `ignorePatterns`       |
 | `quartz/styles/custom.scss`    | site-specific CSS overrides                           |
 | `.github/workflows/deploy.yml` | vault checkout → sync → gates → build → deploy        |
