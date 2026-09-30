@@ -41,7 +41,12 @@ function setup() {
     let blocked = false
     const anchor = {
       getAttribute: () => href,
-      classList: { contains: (name) => name === "home-topic" || name === "broken" },
+      classList: {
+        contains: (name) =>
+          name === "home-topic" ||
+          (name === "broken" &&
+            ["/unpublished/", "/00.fleeting-notes/ai-llm/papers/"].includes(href)),
+      },
       closest: (selector) => (selector === ".home-topics" ? {} : null),
     }
     click({
@@ -64,8 +69,10 @@ test("all homepage topic routes bypass the false broken-link notice", () => {
   }
 })
 
-test("unlisted and blocked paths still show the notice", () => {
+test("published folder and canvas links open while unpublished paths show the notice", () => {
   const click = setup()
+  assert.equal(click("/00.fleeting-notes/ai-llm/papers/"), false)
+  assert.equal(click("/00.fleeting-notes/ai-llm/papers/ai-papers.canvas"), false)
   assert.equal(click("/unpublished/"), true)
   assert.equal(click("/document.pdf"), true)
 })
