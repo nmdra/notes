@@ -17,9 +17,9 @@ Only the folders listed in [`publish.list`](publish.list) are published:
 A line starting with `!` excludes a folder, and wins over any include. Everything else in
 the vault stays private.
 
-Documents are never published: `scripts/sync-content.py` only copies an allowlist of
-extensions (markdown + images), and both the sync report and the CI build fail if a PDF,
-EPUB, Office file, canvas or base reaches `content/` or `public/`.
+Documents are never published: `scripts/sync-content.py` copies Markdown, supported media,
+and Obsidian canvases from allowlisted folders. The sync report flags blocked files, and CI
+fails if a PDF, EPUB, Office file or base reaches `content/` or `public/`.
 
 ## Publish a note
 

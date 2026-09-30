@@ -159,7 +159,7 @@ plugins:
 - source: '@quartz-community/cname'
   enabled: true
 - source: '@quartz-community/canvas-page'
-  enabled: false
+  enabled: true
 - source: '@quartz-community/content-page'
   enabled: true
 - source: '@quartz-community/folder-page'

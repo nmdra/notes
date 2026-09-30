@@ -10,8 +10,9 @@ Two modes, one code path:
             blobs that are actually referenced
 
 Copyright safety: only extensions in ASSET_ALLOW are ever copied out of the
-vault. Documents (pdf/epub/docx/...), canvases and bases are never written to
-content/; every reference to one is reported instead.
+vault. Documents (pdf/epub/docx/...) and bases are never written to content/;
+every reference to one is reported instead. Obsidian canvases are published from
+allowlisted folders.
 
 Usage:
     ./scripts/sync-content.py [--vault PATH] [--quiet]
@@ -51,6 +52,7 @@ ASSET_ALLOW = {
     ".ogg",
     ".mp3",
     ".wav",
+    ".canvas",
 }
 # copyrighted / document formats: never published
 BLOCKED_EXT = {
@@ -75,8 +77,8 @@ BLOCKED_EXT = {
     ".tar",
     ".gz",
 }
-# decided: canvases and bases are not published
-SKIP_EXT = {".canvas", ".base"}
+# Obsidian canvases are supported by Quartz; bases remain unpublished.
+SKIP_EXT = {".base"}
 FILE_EXT = ASSET_ALLOW | BLOCKED_EXT | SKIP_EXT | {NOTE_EXT}
 
 WIKILINK_RE = re.compile(r"!?\[\[([^\]\n]+?)\]\]")
@@ -476,7 +478,7 @@ def print_report(
     for ref, by in sorted(r.blocked.items()):
         who = ", ".join(sorted(by)[:3])
         print(f"    ! {ref}  (referenced by: {who})")
-    print(f"  skipped canvas/base: {len(r.skipped)}")
+    print(f"  skipped bases:     {len(r.skipped)}")
     for ref, by in sorted(r.skipped.items()):
         print(f"    - {ref}  (referenced by: {', '.join(sorted(by)[:3])})")
     print(f"  links outside publish set: {len(r.outside)}")

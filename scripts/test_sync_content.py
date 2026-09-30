@@ -74,6 +74,17 @@ class SyncContentDatesTest(unittest.TestCase):
             self.llms_txt.read_text(encoding="utf-8"),
         )
 
+    def test_sync_copies_canvas_files_from_published_folders(self):
+        canvas = self.vault / "Notes" / "Architecture.canvas"
+        canvas.write_text('{"nodes": [], "edges": []}\n', encoding="utf-8")
+
+        self._sync()
+
+        self.assertEqual(
+            (self.content / "Notes" / "Architecture.canvas").read_text(encoding="utf-8"),
+            '{"nodes": [], "edges": []}\n',
+        )
+
     def test_sync_fails_when_llms_txt_is_missing(self):
         self.llms_txt.unlink()
         args = ["sync-content.py", "--vault", str(self.vault), "--quiet"]
