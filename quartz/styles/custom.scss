@@ -419,6 +419,22 @@ body[data-slug="index"] {
 }
 
 // ---------------------------------------------------------------------------
+// Video callouts — YouTube red with a video-camera icon
+// ---------------------------------------------------------------------------
+.callout[data-callout="video"] {
+  --color: rgb(var(--ctp-mocha-red-rgb));
+  --border: rgba(var(--ctp-mocha-red-rgb), 0.35);
+  --bg: rgba(var(--ctp-mocha-red-rgb), 0.12);
+  --callout-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='13' height='14' rx='2'/%3E%3Cpath d='m16 10 5-3v10l-5-3z'/%3E%3C/svg%3E");
+}
+
+:root:not([saved-theme="dark"]) .callout[data-callout="video"] {
+  --color: rgb(var(--ctp-latte-red-rgb));
+  --border: rgba(var(--ctp-latte-red-rgb), 0.35);
+  --bg: rgba(var(--ctp-latte-red-rgb), 0.12);
+}
+
+// ---------------------------------------------------------------------------
 // Recent notes on the homepage — section heading and card rows
 // ---------------------------------------------------------------------------
 body[data-slug="index"] .recent-notes {
