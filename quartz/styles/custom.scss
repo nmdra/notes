@@ -408,7 +408,17 @@ body[data-slug="index"] {
 // Callouts — rounded corners and subtle shadow on hover across all pages
 // ---------------------------------------------------------------------------
 .callout {
+  margin-block: 0.75rem;
   border-radius: 10px;
+
+  > .callout-title {
+    padding-block: 0.6rem;
+  }
+
+  &:not(.is-collapsed) > .callout-content > :last-child {
+    margin-bottom: 0.6rem;
+  }
+
   transition:
     box-shadow 0.2s ease,
     border-color 0.2s ease;
@@ -742,6 +752,19 @@ blockquote {
   background: color-mix(in srgb, var(--lightgray) 30%, transparent);
   padding: 0.6rem 1rem;
   border-radius: 0 6px 6px 0;
+
+  &:not(.callout) {
+    margin-block: 0.75rem;
+    padding-block: 0.4rem;
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
