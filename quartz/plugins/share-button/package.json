@@ -1,0 +1,43 @@
+{
+  "name": "share-button",
+  "version": "1.0.0",
+  "description": "Copy a note title and public link from a compact share icon in Quartz",
+  "type": "module",
+  "license": "MIT",
+  "author": "Nimendra",
+  "keywords": [
+    "quartz",
+    "quartz-plugin",
+    "share"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./index.js"
+    },
+    "./components": {
+      "import": "./components/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "quartz": {
+    "name": "share-button",
+    "displayName": "Share Button",
+    "category": "component",
+    "version": "1.0.0",
+    "quartzVersion": ">=5.0.0",
+    "dependencies": [],
+    "defaultOrder": 100,
+    "defaultEnabled": true,
+    "components": {
+      "ShareButton": {
+        "displayName": "Share Button",
+        "defaultPosition": "beforeBody",
+        "defaultPriority": 12
+      }
+    }
+  }
+}

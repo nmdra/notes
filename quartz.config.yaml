@@ -233,6 +233,21 @@ plugins:
   layout:
     position: beforeBody
     priority: 10
+    group: note-heading
+    groupOptions:
+      grow: true
+      align: start
+- source: ./quartz/plugins/share-button
+  enabled: true
+  layout:
+    position: beforeBody
+    priority: 12
+    display: all
+    condition: not-index
+    group: note-heading
+    groupOptions:
+      shrink: false
+      align: start
 - source: '@quartz-community/content-meta'
   enabled: true
   layout:
@@ -345,6 +360,10 @@ plugins:
   order: 50
 layout:
   groups:
+    note-heading:
+      priority: 10
+      direction: row
+      gap: 0.75rem
     toolbar:
       priority: 35
       direction: row
@@ -353,6 +372,7 @@ layout:
     '404':
       exclude:
         - '@quartz-community/backlinks'
+        - share-button
       positions:
         beforeBody: []
         left: []
@@ -362,13 +382,19 @@ layout:
       exclude:
         - reader-mode
         - '@quartz-community/backlinks'
+        - share-button
       positions:
         right: []
     tag:
       exclude:
         - reader-mode
         - '@quartz-community/backlinks'
+        - share-button
       positions:
         right: []
-    canvas: {}
-    bases: {}
+    canvas:
+      exclude:
+        - share-button
+    bases:
+      exclude:
+        - share-button
