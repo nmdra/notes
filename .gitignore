@@ -13,7 +13,7 @@ replit.nix
 quartz/cli/tui/dist/
 .turbo/
 
-# content/ is never tracked: it is produced from the (private) Obsidian vault
+# content/ must not be tracked: it is produced from the private Obsidian vault
 # by scripts/sync-content.py, locally for preview and by CI for every deploy.
 # The sync script only ever copies what publish.list allows, and both the local
 # run and the CI run are gated on document-shaped files.
@@ -22,3 +22,15 @@ content/
 
 # playwright-cli session output (snapshots, screenshots)
 .playwright-cli/
+
+# Local secrets and private vault checkouts
+.env
+.env.*
+!.env.example
+/vault/
+/.vault/
+
+# Python tooling output
+.ruff_cache/
+__pycache__/
+*.py[cod]

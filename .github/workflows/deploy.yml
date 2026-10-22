@@ -31,22 +31,23 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      # The vault is private. REPO_KEY is a PAT with read access to
-      # nmdra/Second-Brain; without it CI has no source to publish from, so
-      # fail before checkout produces its own opaque error.
-      - name: Check vault credentials
+      # Set VAULT_REPOSITORY to owner/repository in repository settings.
+      # The checkout action can print this identifier in public Actions logs.
+      # Run only trusted publication code with private-vault access.
+      - name: Check vault configuration
         env:
+          VAULT_REPOSITORY: ${{ vars.VAULT_REPOSITORY }}
           REPO_KEY: ${{ secrets.REPO_KEY }}
         run: |
-          if [ -z "$REPO_KEY" ]; then
-            echo "::error::REPO_KEY is not set — CI cannot read nmdra/Second-Brain"
+          if [ -z "$VAULT_REPOSITORY" ] || [ -z "$REPO_KEY" ]; then
+            echo "::error::Set VAULT_REPOSITORY and REPO_KEY before deploying"
             exit 1
           fi
 
       - name: Check out vault
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
-          repository: nmdra/Second-Brain
+          repository: ${{ vars.VAULT_REPOSITORY }}
           token: ${{ secrets.REPO_KEY }}
           path: vault
           # Use vault history to recover each note's last commit date.
@@ -56,6 +57,7 @@ jobs:
 
       # content/ is written here, not trusted from the push: sync-content.py
       # copies only what publish.list allows and only allowlisted extensions.
+      # Default reports contain counts only. Never use --verbose in public CI.
       - name: Sync published notes
         run: ./scripts/sync-content.py --vault vault
 

@@ -1,13 +1,13 @@
 # Homepage Improvement Plan
 
 > [!NOTE]
-> Based on analysis of your actual project: **41 notes**, mostly AI/LLM book notes under `00.Fleeting Notes/AI-LLM/`, using **Catppuccin Macchiato** theme, Quartz with YAML config (`quartz.config.yaml`).
+> **Historical proposal.** The design examples below reflect an earlier homepage and are not current implementation instructions. Use the [README](../README.md) for current setup, [quartz.config.yaml](../quartz.config.yaml) for active configuration, and the [UI and UX plan](plans/Plan.md) for current interface decisions. The homepage source is [templates/index.md](../templates/index.md), not generated `content/index.md`.
 
 ---
 
 ## Overview
 
-Your current [index.md](file:///home/nimendra/Documents/Projects/obsidian-publish/content/index.md) is a plain 24-line greeting. The goal is to turn it into a **living dashboard** that shows off the graph, highlights recent activity, and gives visitors a real sense of what's inside.
+Your current [homepage template](../templates/index.md) is a plain 24-line greeting. The goal is to turn it into a **living dashboard** that shows off the graph, highlights recent activity, and gives visitors a real sense of what's inside.
 
 ```mermaid
 flowchart LR
@@ -27,7 +27,7 @@ The graph plugin currently sits in the **right sidebar** on every page. We'll ad
 
 ### 1a. Add `is-index` condition ✅ (already done)
 
-In [conditions.ts](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/plugins/loader/conditions.ts), we already added:
+In [conditions.ts](../quartz/plugins/loader/conditions.ts), we already added:
 
 ```typescript
 "is-index": (props) => props.fileData.slug === "index",
@@ -66,7 +66,7 @@ In [conditions.ts](file:///home/nimendra/Documents/Projects/obsidian-publish/qua
 
 ### 1c. Custom CSS to make the homepage graph larger
 
-In [custom.scss](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss), add styles that make the graph taller when it's in the body (not the sidebar):
+In [custom.scss](../quartz/styles/custom.scss), add styles that make the graph taller when it's in the body (not the sidebar):
 
 ```scss
 // ---------------------------------------------------------------------------
@@ -154,8 +154,7 @@ A self-learner exploring **Cloud & DevOps**, **Systems**, and **AI/LLM** — the
 [LinkedIn](https://www.linkedin.com/in/nimendra/) ·
 [X](https://x.com/nimendra_) ·
 [Bluesky](https://bsky.app/profile/nimendra.xyz) ·
-[Resume](https://github.com/nmdra/Nimendra-CV/releases/latest/download/resume.pdf) ·
-[Email](mailto:nimendraonline@gmail.com)
+[Resume](https://github.com/nmdra/Nimendra-CV/releases/latest/download/resume.pdf)
 
 > [!note]- About broken links
 > Some notes link to pages I haven't published yet. Those links still work — they just land on a 404.
@@ -176,7 +175,7 @@ A self-learner exploring **Cloud & DevOps**, **Systems**, and **AI/LLM** — the
 
 ## Phase 4 — Visual Polish via Custom CSS
 
-All changes in [custom.scss](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss). No plugin or component code changes needed.
+All changes in [custom.scss](../quartz/styles/custom.scss). No plugin or component code changes needed.
 
 ### 4a. Card Grid for Tag & Folder Pages (instead of bullet list)
 
@@ -494,10 +493,10 @@ Lower-priority but worth considering:
 
 | File                                                                                                           | Action                                                                                                              |
 | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| [conditions.ts](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/plugins/loader/conditions.ts) | ✅ Already added `is-index`                                                                                         |
-| [quartz.config.yaml](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz.config.yaml)             | Enable recent-notes, add homepage graph instance                                                                    |
-| [content/index.md](file:///home/nimendra/Documents/Projects/obsidian-publish/content/index.md)                 | Rewrite with callouts, topic directory, nav tips                                                                    |
-| [custom.scss](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss)             | Card grids, tag cloud, hero gradient, callout cards, recent notes, graph sizing, reading polish, explorer highlight |
+| [conditions.ts](../quartz/plugins/loader/conditions.ts) | ✅ Already added `is-index`                                                                                         |
+| [quartz.config.yaml](../quartz.config.yaml)             | Enable recent-notes, add homepage graph instance                                                                    |
+| [templates/index.md](../templates/index.md)                 | Rewrite with callouts, topic directory, nav tips                                                                    |
+| [custom.scss](../quartz/styles/custom.scss)             | Card grids, tag cloud, hero gradient, callout cards, recent notes, graph sizing, reading polish, explorer highlight |
 
 ---
 

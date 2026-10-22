@@ -1,7 +1,7 @@
 # Detailed Visual Polish Plan
 
 > [!NOTE]
-> This plan reflects the **current state** of the codebase as of Sep 25 2026. It audits what's already done, identifies gaps, and proposes new improvements.
+> **Historical audit and proposal (September 25, 2026).** Status labels, line references, and examples below describe that snapshot, not the current implementation. Use the [README](../README.md) for current setup, [quartz.config.yaml](../quartz.config.yaml) for active configuration, and the [UI and UX plan](plans/Plan.md) for current interface decisions. The homepage source is [templates/index.md](../templates/index.md), not generated `content/index.md`.
 
 ---
 
@@ -11,24 +11,24 @@
 
 | Feature                                      | Where                                                                                                                 |
 | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `is-index` condition                         | [conditions.ts](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/plugins/loader/conditions.ts)        |
-| Card grid for tag/folder pages               | [custom.scss L156-216](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L156-L216) |
-| Tag cloud on `/tags/` index                  | [custom.scss L222-227](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L222-L227) |
-| Gradient hero title + shimmer                | [custom.scss L232-272](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L232-L272) |
-| Homepage callout hover                       | [custom.scss L278-285](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L278-L285) |
-| Recent notes enabled (homepage-only)         | [quartz.config.yaml L299-311](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz.config.yaml#L299-L311) |
-| Recent notes card styling                    | [custom.scss L290-322](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L290-L322) |
-| Gradient HR                                  | [custom.scss L327-338](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L327-L338) |
-| Image border-radius                          | [custom.scss L340-343](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L340-L343) |
-| Code block top accent                        | [custom.scss L345-348](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L345-L348) |
-| Explorer active + folder hover               | [custom.scss L353-388](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L353-L388) |
-| Wider content on large screens               | [custom.scss L393-397](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L393-L397) |
-| Right sidebar polish (TOC, backlinks, graph) | [custom.scss L418-490](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L418-L490) |
-| Graph colors (Frappé light mode)             | [custom.scss L99-108](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L99-L108)   |
-| Search overlay fix                           | [custom.scss L122-151](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L122-L151) |
-| Broken link toast                            | [custom.scss L495-520](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L495-L520) |
-| Tag chip pills                               | [custom.scss L56-84](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz/styles/custom.scss#L56-L84)     |
-| Vendored graph with custom node colors       | [quartz.config.yaml L188-220](file:///home/nimendra/Documents/Projects/obsidian-publish/quartz.config.yaml#L188-L220) |
+| `is-index` condition                         | [conditions.ts](../quartz/plugins/loader/conditions.ts)        |
+| Card grid for tag/folder pages               | [custom.scss L156-216](../quartz/styles/custom.scss#L156-L216) |
+| Tag cloud on `/tags/` index                  | [custom.scss L222-227](../quartz/styles/custom.scss#L222-L227) |
+| Gradient hero title + shimmer                | [custom.scss L232-272](../quartz/styles/custom.scss#L232-L272) |
+| Homepage callout hover                       | [custom.scss L278-285](../quartz/styles/custom.scss#L278-L285) |
+| Recent notes enabled (homepage-only)         | [quartz.config.yaml L299-311](../quartz.config.yaml#L299-L311) |
+| Recent notes card styling                    | [custom.scss L290-322](../quartz/styles/custom.scss#L290-L322) |
+| Gradient HR                                  | [custom.scss L327-338](../quartz/styles/custom.scss#L327-L338) |
+| Image border-radius                          | [custom.scss L340-343](../quartz/styles/custom.scss#L340-L343) |
+| Code block top accent                        | [custom.scss L345-348](../quartz/styles/custom.scss#L345-L348) |
+| Explorer active + folder hover               | [custom.scss L353-388](../quartz/styles/custom.scss#L353-L388) |
+| Wider content on large screens               | [custom.scss L393-397](../quartz/styles/custom.scss#L393-L397) |
+| Right sidebar polish (TOC, backlinks, graph) | [custom.scss L418-490](../quartz/styles/custom.scss#L418-L490) |
+| Graph colors (Frappé light mode)             | [custom.scss L99-108](../quartz/styles/custom.scss#L99-L108)   |
+| Search overlay fix                           | [custom.scss L122-151](../quartz/styles/custom.scss#L122-L151) |
+| Broken link toast                            | [custom.scss L495-520](../quartz/styles/custom.scss#L495-L520) |
+| Tag chip pills                               | [custom.scss L56-84](../quartz/styles/custom.scss#L56-L84)     |
+| Vendored graph with custom node colors       | [quartz.config.yaml L188-220](../quartz.config.yaml#L188-L220) |
 
 ### ❌ Still Missing (from original plan)
 
@@ -433,8 +433,7 @@ or use **search** to find something specific.
 [GitHub](https://github.com/nmdra) ·
 [LinkedIn](https://www.linkedin.com/in/nimendra/) ·
 [X](https://x.com/nimendra_) ·
-[Bluesky](https://bsky.app/profile/nimendra.xyz) ·
-[Email](mailto:nimendraonline@gmail.com)
+[Bluesky](https://bsky.app/profile/nimendra.xyz)
 
 > [!note]- About broken links
 > Some notes link to pages I haven't published yet.
