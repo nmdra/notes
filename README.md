@@ -101,6 +101,44 @@ files and private checkouts out of Git.
 | `quartz/styles/custom.scss`      | Site-specific CSS                                   |
 | `.github/workflows/deploy.yml`   | Trusted publication workflow                        |
 
+## Diagrams
+
+Mermaid fences render with [Pele](https://pele.run/) through the local
+`quartz/plugins/pele` transformer. The renderer is pinned and bundled into local,
+content-hashed assets. OFM keeps handling wikilinks, callouts, and other Obsidian
+features, with only its `mermaid` option disabled in `quartz.config.yaml`.
+
+Diagrams adapt to their container and use the site theme colors and fonts.
+Readers can copy the source, zoom and pan inline, or open an expanded view.
+Escape closes the expanded view and returns focus to its opener. Invalid diagrams
+show a text error and selectable source.
+
+Pele uses its own layout engine, so its output differs from Mermaid.js. Mermaid
+`themeVariables` do not transfer to the site theme. Fixed diagram colors remain
+fixed across themes. General HTML labels, custom icon packs, and math typesetting
+are not provided by this integration. Diagram image loading is disabled. See
+[Pele compatibility](https://pele.run/compatibility),
+[theming](https://pele.run/theming), [API](https://pele.run/api), and
+[examples](https://pele.run/examples).
+
+Run focused regression tests with:
+
+```bash
+npx tsx --test quartz/plugins/pele/pele.test.ts
+```
+
+For browser checks, build the site, serve `public/` at `http://127.0.0.1:8080`,
+and use an installed Playwright CLI with Chromium:
+
+```bash
+playwright-cli -s=pele open http://127.0.0.1:8080
+playwright-cli -s=pele run-code --filename=quartz/plugins/pele/browser-check.js
+```
+
+The browser check inserts synthetic diagrams into the local page only. To roll
+back the renderer, disable the local Pele plugin and restore OFM `mermaid: true`
+together. Keep only one renderer enabled.
+
 ## Checks
 
 ```bash

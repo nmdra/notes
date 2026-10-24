@@ -1,0 +1,155 @@
+.pele-diagram,
+.pele-dialog {
+  --pele-bg: var(--light);
+  --pele-fg: var(--dark);
+  --pele-muted: var(--darkgray);
+  --pele-line: var(--darkgray);
+  --pele-surface: var(--lightgray);
+  --pele-surface-alt: var(--highlight);
+  --pele-border: var(--gray);
+  --pele-accent: var(--secondary);
+  --pele-font: var(--bodyFont);
+  --pele-font-mono: var(--codeFont);
+  --pele-radius: 5px;
+  --pele-series-1: var(--secondary);
+  --pele-series-2: var(--tertiary);
+  --pele-series-3: var(--darkgray);
+  --pele-series-4: var(--gray);
+  color: var(--dark);
+  font-family: var(--bodyFont);
+  box-sizing: border-box;
+}
+
+.pele-diagram button,
+.pele-dialog button {
+  min-height: 2.75rem;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--gray);
+  border-radius: 5px;
+  background: var(--light);
+  color: var(--dark);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.pele-diagram button:hover:not(:disabled),
+.pele-dialog button:hover:not(:disabled) {
+  background: var(--lightgray);
+}
+
+.pele-diagram button:focus-visible,
+.pele-dialog button:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+}
+
+.pele-diagram .pele-viewport,
+.pele-dialog .pele-viewport {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  /* Reserve room for all three 44px zoom controls when reset becomes visible. */
+  min-height: 10rem;
+  max-height: 70vh;
+  overflow: auto;
+  overscroll-behavior-x: contain;
+  box-sizing: border-box;
+  padding: 0.5rem;
+}
+
+.pele-diagram .pele-viewport > svg.pele,
+.pele-dialog .pele-viewport > svg.pele {
+  display: block;
+  margin-inline: auto;
+}
+
+/* Pele supplies inline zoom-control styles. Enlarge its hit targets without
+   replacing its controls or pan/zoom implementation. */
+.pele-diagram .pele-viewport button[class^="pele-zoom-"],
+.pele-dialog .pele-viewport button[class^="pele-zoom-"] {
+  width: 2.75rem !important;
+  height: 2.75rem !important;
+}
+
+.pele-diagram .pele-error,
+.pele-dialog .pele-error {
+  padding: 0.75rem;
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+figure.pele-diagram {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin: 1.5rem 0;
+  border: 1px solid var(--lightgray);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+figure.pele-diagram > pre.pele-source[hidden] {
+  display: none;
+}
+
+figure.pele-diagram .pele-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--lightgray);
+}
+
+figure.pele-diagram .pele-status {
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.pele-dialog {
+  width: min(96vw, 90rem);
+  max-width: 96vw;
+  max-height: 94vh;
+  max-height: 94dvh;
+  padding: 0;
+  border: 1px solid var(--gray);
+  border-radius: 8px;
+  background: var(--light);
+  overflow: auto;
+}
+
+.pele-dialog::backdrop {
+  background: rgb(0 0 0 / 65%);
+}
+
+.pele-dialog .pele-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--lightgray);
+}
+
+.pele-dialog .pele-dialog-header h2 {
+  margin: 0;
+  font-family: var(--headerFont);
+  font-size: 1rem;
+}
+
+.pele-dialog .pele-expanded-viewport {
+  height: 78vh;
+  height: 78dvh;
+  max-height: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pele-diagram *,
+  .pele-dialog * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

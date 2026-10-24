@@ -57,6 +57,10 @@ plugins:
     - git
     - filesystem
   order: 10
+# Replace only OFM's Mermaid renderer; keep mermaid: false below.
+- source: './quartz/plugins/pele'
+  enabled: true
+  order: 15
 - source: '@quartz-community/syntax-highlighting'
   enabled: true
   options:
@@ -72,7 +76,7 @@ plugins:
     highlight: true
     wikilinks: true
     callouts: true
-    mermaid: true
+    mermaid: false
     parseTags: true
     parseArrows: true
     parseBlockReferences: true

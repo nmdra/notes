@@ -1,0 +1,22 @@
+[
+  {
+    "name": "flowchart with a line break",
+    "source": "flowchart LR\n  A[\"Read<br/>source\"] --> B[Render]"
+  },
+  {
+    "name": "sequence diagram",
+    "source": "sequenceDiagram\n  Alice->>Bob: Hello\n  Bob-->>Alice: Ready"
+  },
+  {
+    "name": "frontmatter configuration",
+    "source": "---\nconfig:\n  flowchart:\n    curve: linear\n---\nflowchart TD\n  A --> B"
+  },
+  {
+    "name": "legacy init directive",
+    "source": "%%{init: {'flowchart': {'curve': 'linear'}}}%%\ngraph TD\n  Start --> Finish"
+  },
+  {
+    "name": "HTML-sensitive label",
+    "source": "flowchart TD\n  A[\"A & B <br/> C\"] --> B[Done]"
+  }
+]
