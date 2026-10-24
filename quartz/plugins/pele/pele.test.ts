@@ -133,6 +133,25 @@ test("local resources bundle without a CDN and CSS parses without fallback", () 
   assert.deepEqual(css.warnings, [])
 })
 
+test("backdrop blur survives production CSS minification", () => {
+  const css = transformCss({
+    filename: "pele.css",
+    code: readFileSync(new URL("./pele.scss", import.meta.url)),
+    minify: true,
+    targets: {
+      safari: (15 << 16) | (6 << 8),
+      ios_saf: (15 << 16) | (6 << 8),
+      edge: 115 << 16,
+      firefox: 102 << 16,
+      chrome: 109 << 16,
+    },
+    errorRecovery: false,
+  }).code.toString()
+  const backdrop = css.match(/\.pele-dialog::backdrop\{([^}]*)\}/)?.[1] ?? ""
+  assert.match(backdrop, /(?:^|;)backdrop-filter:blur\(4px\)(?:;|$)/)
+  assert.match(backdrop, /(?:^|;)-webkit-backdrop-filter:blur\(4px\)(?:;|$)/)
+})
+
 test("OFM retains callouts, links, embeds and diagram block references", async () => {
   const ctx = { cfg: { configuration: { baseUrl: "example.test" } } } as BuildCtx
   const pele = Pele()

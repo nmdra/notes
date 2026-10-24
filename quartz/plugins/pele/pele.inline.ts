@@ -337,9 +337,65 @@ function enhance(figure: HTMLElement) {
       content.append(header, largeStage)
       document.body.append(dialog)
       close.addEventListener("click", () => dialog?.close(), { signal: dialogEvents.signal })
+      let backdropStart: { x: number; y: number; pointerId: number } | undefined
+      const isBackdrop = (event: MouseEvent) => {
+        if (!dialog || event.target !== dialog) return false
+        const bounds = dialog.getBoundingClientRect()
+        return (
+          event.clientX < bounds.left ||
+          event.clientX >= bounds.right ||
+          event.clientY < bounds.top ||
+          event.clientY >= bounds.bottom
+        )
+      }
+      dialog.addEventListener(
+        "pointerdown",
+        (event) => {
+          backdropStart =
+            event.isPrimary && event.button === 0 && isBackdrop(event)
+              ? { x: event.clientX, y: event.clientY, pointerId: event.pointerId }
+              : undefined
+        },
+        { signal: dialogEvents.signal },
+      )
+      dialog.addEventListener(
+        "pointermove",
+        (event) => {
+          if (!backdropStart || event.pointerId !== backdropStart.pointerId) return
+          if (Math.hypot(event.clientX - backdropStart.x, event.clientY - backdropStart.y) > 8)
+            backdropStart = undefined
+        },
+        { signal: dialogEvents.signal },
+      )
+      dialog.addEventListener(
+        "pointercancel",
+        () => {
+          backdropStart = undefined
+        },
+        { signal: dialogEvents.signal },
+      )
+      dialog.addEventListener(
+        "click",
+        (event) => {
+          const start = backdropStart
+          backdropStart = undefined
+          // A pan or drag must not become an outside-click dismissal.
+          if (
+            !start ||
+            !isBackdrop(event) ||
+            Math.hypot(event.clientX - start.x, event.clientY - start.y) > 8
+          )
+            return
+          event.preventDefault()
+          event.stopPropagation()
+          dialog?.close()
+        },
+        { signal: dialogEvents.signal },
+      )
       dialog.addEventListener(
         "close",
         () => {
+          backdropStart = undefined
           if (document.fullscreenElement === content) void document.exitFullscreen().catch(() => {})
           if (returnFocus?.isConnected) returnFocus.focus()
           returnFocus = undefined

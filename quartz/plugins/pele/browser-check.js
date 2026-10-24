@@ -344,6 +344,79 @@ async function checkPele(page) {
         .evaluate((el) => el === document.activeElement),
       "Dialog did not focus close control",
     )
+    check(
+      await dialog.getByRole("button", { name: "Close expanded diagram" }).evaluate((button) => {
+        const bounds = button.getBoundingClientRect()
+        const icon = button.querySelector("svg").getBoundingClientRect()
+        return (
+          bounds.width === 28 && bounds.height === 28 && icon.width === 16 && icon.height === 16
+        )
+      }),
+      "Dialog close button or icon changed size",
+    )
+    for (const theme of ["light", "dark"]) {
+      const backdrop = await dialog.evaluate(async (el, theme) => {
+        document.documentElement.setAttribute("saved-theme", theme)
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+        const probe = document.createElement("span")
+        probe.style.background = "color-mix(in srgb, var(--light) 78%, transparent)"
+        el.append(probe)
+        const expected = getComputedStyle(probe).backgroundColor
+        const style = getComputedStyle(el, "::backdrop")
+        const result = {
+          background: style.backgroundColor,
+          expected,
+          blur: style.backdropFilter,
+        }
+        probe.remove()
+        return result
+      }, theme)
+      check(
+        backdrop.background === backdrop.expected && backdrop.blur === "blur(4px)",
+        `Dialog backdrop is not theme-aware 78% background with 4px blur in ${theme}`,
+      )
+    }
+    // Exercise pointer eligibility without depending on browser-generated click suppression.
+    const syntheticGesture = async (target, options = {}) => {
+      await page.evaluate(
+        ({ target, options }) => {
+          const dialog = document.querySelector("dialog[open].pele-dialog")
+          const selector = target === "header" ? ".pele-dialog-header" : target
+          const element = target === "dialog" ? dialog : dialog.querySelector(selector)
+          if (!element) throw new Error(`Missing gesture target: ${target}`)
+          const bounds = dialog.getBoundingClientRect()
+          const point = options.inside
+            ? { clientX: bounds.left + bounds.width / 2, clientY: bounds.top + bounds.height / 2 }
+            : { clientX: 4, clientY: 4 }
+          const init = {
+            bubbles: true,
+            pointerId: 1,
+            isPrimary: true,
+            button: 0,
+            ...point,
+            ...options,
+          }
+          element.dispatchEvent(new PointerEvent("pointerdown", init))
+          if (options.cancel) element.dispatchEvent(new PointerEvent("pointercancel", init))
+          element.dispatchEvent(new PointerEvent("pointerup", init))
+          element.dispatchEvent(new MouseEvent("click", init))
+        },
+        { target, options },
+      )
+    }
+    for (const options of [
+      { isPrimary: false },
+      { button: 2 },
+      { inside: true },
+      { cancel: true },
+    ]) {
+      await syntheticGesture("dialog", options)
+      check(await dialog.isVisible(), "Ineligible or canceled pointer dismissed the dialog")
+    }
+    await syntheticGesture("header")
+    check(await dialog.isVisible(), "Header click dismissed the dialog")
+    await syntheticGesture(".pele-viewport > svg.pele")
+    check(await dialog.isVisible(), "SVG click dismissed the dialog")
     const smallDialogBounds = await dialog.boundingBox()
     check(smallDialogBounds.height < 450, "Small expanded diagram leaves excessive empty height")
     check(
@@ -378,21 +451,71 @@ async function checkPele(page) {
     await wideSvg.focus()
     await page.keyboard.press("ArrowRight")
     await checkControlRow(wideViewport, "wide modal zoom and pan")
+    await syntheticGesture(".pele-help")
+    check(await wideDialog.isVisible(), "Help click dismissed the dialog")
+    const outside = { x: 4, y: 4 }
+    const wideBounds = await wideDialog.boundingBox()
+    check(
+      wideBounds.x > outside.x && wideBounds.y > outside.y,
+      "Outside test point is inside dialog",
+    )
+    await page.mouse.move(outside.x, outside.y)
+    await page.mouse.down()
+    await page.mouse.move(outside.x + 20, outside.y, { steps: 4 })
+    await page.mouse.up()
+    check(await wideDialog.isVisible(), "Outside drag over 8px dismissed the dialog")
+    await page.mouse.move(outside.x, outside.y)
+    await page.mouse.down()
+    await page.mouse.move(outside.x + 20, outside.y, { steps: 4 })
+    await page.mouse.move(outside.x, outside.y, { steps: 4 })
+    await page.mouse.up()
+    check(
+      await wideDialog.isVisible(),
+      "Returning an outside drag to its start dismissed the dialog",
+    )
+    await page.mouse.move(outside.x, outside.y)
+    await page.mouse.down()
+    await page.mouse.move(
+      wideBounds.x + wideBounds.width / 2,
+      wideBounds.y + wideBounds.height / 2,
+      { steps: 4 },
+    )
+    await page.mouse.up()
+    check(await wideDialog.isVisible(), "Outside-to-inside drag dismissed the dialog")
+    const panBounds = await wideSvg.boundingBox()
+    await page.mouse.move(panBounds.x + panBounds.width / 2, panBounds.y + panBounds.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(outside.x, outside.y, { steps: 8 })
+    await page.mouse.up()
+    check(await wideDialog.isVisible(), "Zoomed SVG pan ending outside dismissed the dialog")
     const retainedSvg = await wideSvg.elementHandle()
     const retainedStyle = await wideSvg.getAttribute("style")
     const retainedViewBox = await wideSvg.getAttribute("viewBox")
-    await page.keyboard.press("Escape")
-    await wideDialog.waitFor({ state: "hidden" })
-    check(await retainedSvg.evaluate((svg) => svg.isConnected), "Closing modal destroyed its SVG")
-    await wideExpand.click()
-    await wideDialog.waitFor()
-    check(
-      await wideSvg.evaluate((svg, previous) => svg === previous, retainedSvg),
-      "Reopening replaced the mounted SVG",
-    )
-    check((await wideSvg.getAttribute("style")) === retainedStyle, "Reopening lost zoom state")
-    check((await wideSvg.getAttribute("viewBox")) === retainedViewBox, "Reopening lost pan state")
-    await checkControlRow(wideViewport, "wide modal reopened")
+    for (const dismissal of ["outside", "Escape"]) {
+      if (dismissal === "outside") await page.mouse.click(4, 4)
+      else await page.keyboard.press("Escape")
+      await wideDialog.waitFor({ state: "hidden" })
+      check(
+        await wideExpand.evaluate((el) => el === document.activeElement),
+        `${dismissal} dismissal did not restore opener focus`,
+      )
+      check(await retainedSvg.evaluate((svg) => svg.isConnected), "Closing modal destroyed its SVG")
+      await wideExpand.click()
+      await wideDialog.waitFor()
+      check(
+        await wideSvg.evaluate((svg, previous) => svg === previous, retainedSvg),
+        `Reopening after ${dismissal} replaced the mounted SVG`,
+      )
+      check(
+        (await wideSvg.getAttribute("style")) === retainedStyle,
+        `Reopening after ${dismissal} lost zoom state`,
+      )
+      check(
+        (await wideSvg.getAttribute("viewBox")) === retainedViewBox,
+        `Reopening after ${dismissal} lost pan state`,
+      )
+      await checkControlRow(wideViewport, `wide modal reopened after ${dismissal}`)
+    }
     await wideViewport.getByRole("button", { name: "Reset zoom" }).click()
     await checkControlRow(wideViewport, "wide modal reset")
     await wideDialog.getByRole("button", { name: "Close expanded diagram" }).click()
@@ -457,6 +580,12 @@ async function checkPele(page) {
         "non-reflowing-chart-height",
         "content-sized-small-modal",
         "modal-state-retention",
+        "modal-theme-backdrop",
+        "modal-close-icon-sizing",
+        "modal-pointer-dismissal-eligibility",
+        "modal-inside-clicks",
+        "modal-outside-click-focus",
+        "modal-drag-pan-safety",
         "modal-escape-focus",
         "clone-remount",
         "SPA-cleanup",

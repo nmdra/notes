@@ -205,9 +205,12 @@ Readers can copy the source or open an expanded view. Pele's `zoom: "auto"`
 enables zoom and pan only when a diagram shrinks to fit; native controls occupy
 their own row instead of covering nodes. Expanded views fit their content and
 retain zoom and pan between openings at the same size on the same page. Browser
-fullscreen is available where supported. Escape closes the expanded view and
-returns focus to its opener; fullscreen can consume the first Escape press.
-Invalid diagrams show a text error and selectable source.
+fullscreen is available where supported. The expanded view uses the same 4px
+background blur and theme-aware overlay as image zoom. Click or tap outside the
+card, press Escape, or use the close button to dismiss it and restore focus to
+its opener. Diagram interactions and drags do not dismiss the view. Fullscreen
+can consume the first Escape press. Invalid diagrams show a text error and
+selectable source.
 
 Diagram colors use soft, theme-aware node and subgraph fills, readable borders,
 and eight chart-series colors for light and dark mode. Explicit Mermaid `style`
