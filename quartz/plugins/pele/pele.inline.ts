@@ -10,11 +10,37 @@ let nextId = 0
 let scanQueued = false
 let generation = 0
 
-function button(label: string): HTMLButtonElement {
+const iconPaths = {
+  copy: "M8 8h12v12H8z M16 8V4H4v12h4",
+  expand: "M8 3H3v5 M16 3h5v5 M21 16v5h-5 M8 21H3v-5",
+  close: "M6 6l12 12 M18 6L6 18",
+  check: "M5 12l4 4L19 6",
+}
+
+function setIcon(control: HTMLButtonElement, name: keyof typeof iconPaths) {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+  svg.setAttribute("viewBox", "0 0 24 24")
+  svg.setAttribute("aria-hidden", "true")
+  svg.setAttribute("focusable", "false")
+  svg.setAttribute("fill", "none")
+  svg.setAttribute("stroke", "currentColor")
+  svg.setAttribute("stroke-width", "1.75")
+  svg.setAttribute("stroke-linecap", "round")
+  svg.setAttribute("stroke-linejoin", "round")
+  svg.dataset.icon = name
+  const path = document.createElementNS(svg.namespaceURI, "path")
+  path.setAttribute("d", iconPaths[name])
+  svg.append(path)
+  control.replaceChildren(svg)
+}
+
+function button(label: string, icon: keyof typeof iconPaths): HTMLButtonElement {
   const control = document.createElement("button")
   control.type = "button"
-  control.textContent = label
+  control.className = "pele-icon-button"
+  control.title = label
   control.setAttribute("aria-label", label)
+  setIcon(control, icon)
   return control
 }
 
@@ -35,8 +61,8 @@ function enhance(figure: HTMLElement) {
   let copyTimer: ReturnType<typeof setTimeout> | undefined
   const controls = document.createElement("div")
   controls.className = "pele-toolbar"
-  const copy = button("Copy diagram source")
-  const expand = button("Expand diagram")
+  const copy = button("Copy diagram source", "copy")
+  const expand = button("Expand diagram", "expand")
   expand.setAttribute("aria-haspopup", "dialog")
   const status = document.createElement("span")
   status.className = "pele-status"
@@ -83,17 +109,27 @@ function enhance(figure: HTMLElement) {
   copy.addEventListener(
     "click",
     async () => {
+      clearTimeout(copyTimer)
+      setIcon(copy, "copy")
+      copy.title = "Copy diagram source"
+      status.classList.remove("is-error")
       try {
         await navigator.clipboard.writeText(source)
         if (disposed) return
+        setIcon(copy, "check")
+        copy.title = "Source copied"
         status.textContent = "Source copied."
       } catch {
         if (disposed) return
+        copy.title = "Copy failed"
+        status.classList.add("is-error")
         status.textContent = "Copy failed. Check clipboard permissions."
       }
-      clearTimeout(copyTimer)
       copyTimer = setTimeout(() => {
         status.textContent = ""
+        status.classList.remove("is-error")
+        setIcon(copy, "copy")
+        copy.title = "Copy diagram source"
       }, 3000)
     },
     { signal: events.signal },
@@ -130,7 +166,7 @@ function enhance(figure: HTMLElement) {
       dialog.setAttribute("aria-labelledby", title.id)
       const header = document.createElement("div")
       header.className = "pele-dialog-header"
-      const close = button("Close expanded diagram")
+      const close = button("Close expanded diagram", "close")
       close.autofocus = true
       header.append(title, close)
       const largeViewport = document.createElement("div")

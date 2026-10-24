@@ -54,14 +54,66 @@ async function checkPele(page) {
       await figures.nth(2).locator("pre.pele-source").isVisible(),
       "Failed source is not selectable",
     )
-    await figures.first().getByRole("button", { name: "Copy diagram source" }).click()
-    await figures.first().getByRole("status").filter({ hasText: "Source copied." }).waitFor()
+    const copyControl = figures.first().getByRole("button", { name: "Copy diagram source" })
+    const iconControls = await figures
+      .first()
+      .locator(".pele-toolbar button")
+      .evaluateAll((buttons) =>
+        buttons.map((button) => ({
+          text: button.textContent.trim(),
+          title: button.getAttribute("title"),
+          label: button.getAttribute("aria-label"),
+          iconHidden: button.querySelector("svg")?.getAttribute("aria-hidden"),
+          width: button.getBoundingClientRect().width,
+          height: button.getBoundingClientRect().height,
+        })),
+      )
+    check(
+      iconControls.length === 2 &&
+        iconControls.every(
+          (control) =>
+            control.text === "" &&
+            control.title === control.label &&
+            control.iconHidden === "true" &&
+            control.width === 28 &&
+            control.height === 28,
+        ),
+      "Toolbar controls are not compact accessible icons",
+    )
+    check(
+      await figures
+        .first()
+        .locator(".pele-toolbar")
+        .evaluate(
+          (toolbar) =>
+            getComputedStyle(toolbar).justifyContent === "flex-end" &&
+            getComputedStyle(toolbar).borderBottomWidth === "0px",
+        ),
+      "Toolbar is not compact and right-aligned",
+    )
+    await copyControl.click()
+    await figures
+      .first()
+      .getByRole("status")
+      .filter({ hasText: "Source copied." })
+      .waitFor({ state: "attached" })
+    check(
+      (await copyControl.locator('svg[data-icon="check"]').count()) === 1,
+      "Copy did not show a checkmark",
+    )
     check(
       (await page.evaluate(() => navigator.clipboard.readText())) === source,
       "Copy changed raw source",
     )
     const viewport = figures.first().locator(".pele-viewport")
     const svg = viewport.locator(":scope > svg.pele")
+    const nativeSize = await viewport
+      .getByRole("button", { name: "Zoom in", exact: true })
+      .boundingBox()
+    check(
+      nativeSize.width === 24 && nativeSize.height === 24,
+      "Native Pele zoom sizing was overridden",
+    )
     const beforeZoom = await svg.getAttribute("style")
     await viewport.getByRole("button", { name: "Zoom in", exact: true }).click()
     check((await svg.getAttribute("style")) !== beforeZoom, "Zoom in had no effect")
@@ -111,6 +163,10 @@ async function checkPele(page) {
     await expand.click()
     const dialog = page.getByRole("dialog", { name: "Expanded diagram" })
     await dialog.locator(".pele-viewport > svg.pele").waitFor()
+    check(
+      (await dialog.getByRole("button", { name: "Close expanded diagram" }).textContent()) === "",
+      "Dialog close control is not icon-only",
+    )
     check(
       await dialog
         .getByRole("button", { name: "Close expanded diagram" })
@@ -165,6 +221,9 @@ async function checkPele(page) {
       passed: true,
       viewportThemeChecks: viewports.length,
       checks: [
+        "compact-accessible-icons",
+        "native-zoom-sizing",
+        "copy-checkmark",
         "source-copy",
         "safe-errors",
         "zoom-reset",

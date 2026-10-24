@@ -20,21 +20,32 @@
   box-sizing: border-box;
 }
 
-.pele-diagram button,
-.pele-dialog button {
-  min-height: 2.75rem;
-  padding: 0.4rem 0.65rem;
-  border: 1px solid var(--gray);
-  border-radius: 5px;
-  background: var(--light);
-  color: var(--dark);
-  font: inherit;
-  font-size: 0.85rem;
+.pele-diagram .pele-icon-button,
+.pele-dialog .pele-icon-button {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--darkgray);
   cursor: pointer;
 }
 
-.pele-diagram button:hover:not(:disabled),
-.pele-dialog button:hover:not(:disabled) {
+.pele-icon-button > svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.pele-diagram .pele-icon-button:hover:not(:disabled),
+.pele-dialog .pele-icon-button:hover:not(:disabled) {
   background: var(--lightgray);
 }
 
@@ -49,8 +60,8 @@
   position: relative;
   width: 100%;
   min-width: 0;
-  /* Reserve room for all three 44px zoom controls when reset becomes visible. */
-  min-height: 10rem;
+  /* Leave room for Pele's native 24px controls, including reset. */
+  min-height: 6rem;
   max-height: 70vh;
   overflow: auto;
   overscroll-behavior-x: contain;
@@ -62,14 +73,6 @@
 .pele-dialog .pele-viewport > svg.pele {
   display: block;
   margin-inline: auto;
-}
-
-/* Pele supplies inline zoom-control styles. Enlarge its hit targets without
-   replacing its controls or pan/zoom implementation. */
-.pele-diagram .pele-viewport button[class^="pele-zoom-"],
-.pele-dialog .pele-viewport button[class^="pele-zoom-"] {
-  width: 2.75rem !important;
-  height: 2.75rem !important;
 }
 
 .pele-diagram .pele-error,
@@ -98,12 +101,25 @@ figure.pele-diagram .pele-toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem;
-  border-bottom: 1px solid var(--lightgray);
+  justify-content: flex-end;
+  gap: 0.25rem;
+  padding: 0.25rem 0.375rem;
 }
 
-figure.pele-diagram .pele-status {
+/* Successful copy feedback is the check icon plus a screen-reader announcement.
+   Keep failures visible without adding a permanent text row. */
+figure.pele-diagram .pele-status:not(.is-error) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+figure.pele-diagram .pele-status.is-error {
+  flex-basis: 100%;
   font-size: 0.85rem;
   overflow-wrap: anywhere;
 }
@@ -129,7 +145,7 @@ figure.pele-diagram .pele-status {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  padding: 0.75rem;
+  padding: 0.5rem;
   border-bottom: 1px solid var(--lightgray);
 }
 
@@ -143,6 +159,26 @@ figure.pele-diagram .pele-status {
   height: 78vh;
   height: 78dvh;
   max-height: none;
+}
+
+@media (pointer: coarse) {
+  .pele-diagram .pele-icon-button,
+  .pele-dialog .pele-icon-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Preserve Pele's native controls, with slightly larger touch targets. */
+  .pele-diagram .pele-viewport button[class^="pele-zoom-"],
+  .pele-dialog .pele-viewport button[class^="pele-zoom-"] {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .pele-diagram .pele-viewport,
+  .pele-dialog .pele-viewport {
+    min-height: 8rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
