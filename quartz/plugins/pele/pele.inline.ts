@@ -15,6 +15,8 @@ const iconPaths = {
   expand: "M8 3H3v5 M16 3h5v5 M21 16v5h-5 M8 21H3v-5",
   close: "M6 6l12 12 M18 6L6 18",
   check: "M5 12l4 4L19 6",
+  fullscreen: "M8 3H3v5 M16 3h5v5 M21 16v5h-5 M8 21H3v-5",
+  restore: "M3 8h5V3 M21 8h-5V3 M16 21v-5h5 M8 21v-5H3",
 }
 
 function setIcon(control: HTMLButtonElement, name: keyof typeof iconPaths) {
@@ -44,6 +46,66 @@ function button(label: string, icon: keyof typeof iconPaths): HTMLButtonElement 
   return control
 }
 
+function createStage() {
+  const stage = document.createElement("div")
+  stage.className = "pele-stage"
+  const viewport = document.createElement("div")
+  viewport.className = "pele-viewport"
+  viewport.setAttribute("aria-label", "Diagram")
+  const help = document.createElement("p")
+  help.className = "pele-help"
+  help.id = `quartz-pele-help-${++nextId}`
+  help.hidden = true
+  help.textContent =
+    "Pinch or Ctrl/⌘ + scroll to zoom. Drag to pan. Use +, −, 0 and arrow keys when focused."
+  const zoomSlot = document.createElement("div")
+  zoomSlot.className = "pele-zoom-slot"
+  zoomSlot.hidden = true
+  stage.append(zoomSlot, viewport, help)
+  return { stage, viewport }
+}
+
+function placeZoomControls(target: HTMLElement) {
+  const slot = target.parentElement?.querySelector<HTMLElement>(":scope > .pele-zoom-slot")
+  const zoom =
+    target.querySelector<HTMLElement>(":scope > .pele-zoom") ??
+    slot?.querySelector<HTMLElement>(":scope > .pele-zoom")
+  const zoomable = !!target.querySelector(":scope > svg.pele") && !!zoom && !zoom.hidden
+  // Pele 1.9 reparents its panel on refresh and zoom. Keep the native buttons,
+  // but place them outside the drawing area that Pele measures for pan/zoom.
+  if (slot) {
+    if (zoom && zoom.parentElement !== slot) slot.append(zoom)
+    if (slot.hidden !== !zoomable) slot.hidden = !zoomable
+  }
+  return zoomable
+}
+
+function layoutDiagram(target: HTMLElement) {
+  if (!target.isConnected || target.clientWidth === 0) return
+  const svg = target.querySelector<SVGSVGElement>(":scope > svg.pele")
+  if (!svg) return
+  // Quartz's global text rule otherwise overrides SVG presentation fills.
+  // Preserve explicit renderer/authored fills before restoring inheritance.
+  for (const text of svg.querySelectorAll<SVGTextElement>("text[fill]")) {
+    if (!text.style.fill) text.style.fill = text.getAttribute("fill")!
+  }
+  const zoomable = placeZoomControls(target)
+  target.dataset.zoomable = String(zoomable)
+  const help = target.parentElement?.querySelector<HTMLParagraphElement>(":scope > .pele-help")
+  if (help) {
+    help.hidden = !zoomable
+    if (zoomable) svg.setAttribute("aria-describedby", help.id)
+    else svg.removeAttribute("aria-describedby")
+  }
+  const style = getComputedStyle(target)
+  const height =
+    svg.getBoundingClientRect().height +
+    (parseFloat(style.paddingTop) || 0) +
+    (parseFloat(style.paddingBottom) || 0)
+  // A stable mount height keeps native zoom from changing its own container size.
+  target.style.setProperty("--pele-content-height", `${Math.ceil(height)}px`)
+}
+
 function enhance(figure: HTMLElement) {
   const sourceElement = figure.querySelector<HTMLPreElement>(":scope > pre.pele-source")
   if (!sourceElement) return
@@ -68,12 +130,11 @@ function enhance(figure: HTMLElement) {
   status.className = "pele-status"
   status.setAttribute("role", "status")
   controls.append(copy, expand, status)
-  const viewport = document.createElement("div")
-  viewport.className = "pele-viewport"
-  viewport.setAttribute("aria-label", "Diagram with zoom controls")
-  figure.append(controls, viewport)
+  const { stage, viewport } = createStage()
+  figure.append(controls, stage)
 
   const mounts = new Set<Mounted>()
+  const layoutObservers = new Set<MutationObserver | ResizeObserver>()
   function render(target: HTMLElement): Mounted | undefined {
     const error = (reason: unknown) => {
       // Keep failed source selectable even when clipboard access is denied.
@@ -83,6 +144,10 @@ function enhance(figure: HTMLElement) {
       message.setAttribute("role", "status")
       message.textContent = `Unable to render diagram: ${reason instanceof Error ? reason.message : "Invalid diagram source."}`
       target.replaceChildren(message)
+      target.style.removeProperty("--pele-content-height")
+      const help = target.parentElement?.querySelector<HTMLElement>(":scope > .pele-help")
+      if (help) help.hidden = true
+      placeZoomControls(target)
     }
     try {
       const mounted = mount(target, source, {
@@ -90,21 +155,71 @@ function enhance(figure: HTMLElement) {
         autoDirection: true,
         // Do not fetch source image URLs. Keep default link and size limits.
         images: false,
-        // Use Pele's labelled buttons, keyboard zoom, pointer pan, and pinch zoom.
-        zoom: {
-          always: true,
-          controls: true,
-          labels: { zoomIn: "Zoom in", zoomOut: "Zoom out", reset: "Reset zoom" },
+        // Native controls and gestures activate only when the SVG shrinks to fit.
+        zoom: "auto",
+        onRender: () => {
+          // On the first render, Pele creates zoom after calling onRender.
+          queueMicrotask(() => {
+            if (!disposed) layoutDiagram(target)
+          })
         },
         onError: error,
       })
       mounts.add(mounted)
+      const targetStage = target.parentElement!
+      targetStage.addEventListener(
+        "click",
+        (event) => {
+          const control =
+            event.target instanceof Element
+              ? event.target.closest<HTMLButtonElement>(".pele-zoom button")
+              : null
+          if (!control) return
+          queueMicrotask(() => {
+            if (disposed || !control.isConnected) return
+            placeZoomControls(target)
+            // Reparenting a focused native button can blur it. Keep keyboard focus.
+            const focus =
+              control.disabled || getComputedStyle(control).display === "none"
+                ? target.querySelector<SVGSVGElement>(":scope > svg.pele")
+                : control
+            focus?.focus({ preventScroll: true })
+          })
+        },
+        { signal: events.signal },
+      )
+      const layoutObserver = new MutationObserver(() => {
+        const zoomable = placeZoomControls(target)
+        // Width-only auto-zoom changes can happen without a new render.
+        if (target.dataset.zoomable !== String(zoomable)) layoutDiagram(target)
+      })
+      layoutObserver.observe(targetStage, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["hidden"],
+      })
+      layoutObservers.add(layoutObserver)
+      let width = target.clientWidth
+      const resizeObserver = new ResizeObserver(() => {
+        const nextWidth = target.clientWidth
+        if (nextWidth === 0 || nextWidth === width) return
+        width = nextWidth
+        requestAnimationFrame(() => {
+          if (disposed || !target.isConnected || target.clientWidth === 0) return
+          // CSS can shrink a non-reflowing SVG without invoking onRender.
+          mounted.refresh()
+          layoutDiagram(target)
+        })
+      })
+      resizeObserver.observe(target)
+      layoutObservers.add(resizeObserver)
       return mounted
     } catch (reason) {
       error(reason)
     }
   }
-  render(viewport)
+  const inline = render(viewport)
 
   copy.addEventListener(
     "click",
@@ -139,7 +254,7 @@ function enhance(figure: HTMLElement) {
   let expanded: Mounted | undefined
   let dialogEvents: AbortController | undefined
   let returnFocus: HTMLElement | undefined
-  function closeExpanded(restoreFocus = true) {
+  function disposeExpanded() {
     dialogEvents?.abort()
     dialogEvents = undefined
     if (expanded) {
@@ -147,19 +262,33 @@ function enhance(figure: HTMLElement) {
       mounts.delete(expanded)
       expanded = undefined
     }
+    if (document.fullscreenElement && dialog?.contains(document.fullscreenElement))
+      void document.exitFullscreen().catch(() => {})
     dialog?.remove()
     dialog = undefined
-    if (restoreFocus && returnFocus?.isConnected) returnFocus.focus()
     returnFocus = undefined
   }
   expand.addEventListener(
     "click",
     () => {
-      if (dialog) return
       returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : expand
+      if (dialog) {
+        dialog.showModal()
+        expanded?.refresh()
+        dialog.querySelector<HTMLButtonElement>(".pele-dialog-close")?.focus()
+        return
+      }
       dialogEvents = new AbortController()
       dialog = document.createElement("dialog")
       dialog.className = "pele-dialog"
+      dialog.style.setProperty(
+        "--pele-dialog-width",
+        `${Math.min(1440, Math.max(420, (inline?.result?.width ?? 1376) + 64))}px`,
+      )
+      // The Fullscreen API accepts this div, but rejects dialog elements.
+      const content = document.createElement("div")
+      content.className = "pele-dialog-content"
+      dialog.append(content)
       const title = document.createElement("h2")
       title.id = `quartz-pele-title-${++nextId}`
       title.textContent = "Expanded diagram"
@@ -168,19 +297,59 @@ function enhance(figure: HTMLElement) {
       header.className = "pele-dialog-header"
       const close = button("Close expanded diagram", "close")
       close.autofocus = true
-      header.append(title, close)
-      const largeViewport = document.createElement("div")
-      largeViewport.className = "pele-viewport pele-expanded-viewport"
-      largeViewport.setAttribute("aria-label", "Expanded diagram with zoom controls")
-      dialog.append(header, largeViewport)
+      close.classList.add("pele-dialog-close")
+      const actions = document.createElement("div")
+      actions.className = "pele-dialog-actions"
+      if (document.fullscreenEnabled && content.requestFullscreen) {
+        const fullscreen = button("Enter fullscreen", "fullscreen")
+        fullscreen.addEventListener(
+          "click",
+          async () => {
+            try {
+              if (document.fullscreenElement === content) await document.exitFullscreen()
+              else await content.requestFullscreen()
+            } catch {
+              fullscreen.title = "Fullscreen unavailable"
+            }
+          },
+          { signal: dialogEvents.signal },
+        )
+        document.addEventListener(
+          "fullscreenchange",
+          () => {
+            const active = document.fullscreenElement === content
+            const label = active ? "Exit fullscreen" : "Enter fullscreen"
+            fullscreen.setAttribute("aria-label", label)
+            fullscreen.title = label
+            setIcon(fullscreen, active ? "restore" : "fullscreen")
+            requestAnimationFrame(() => {
+              if (!disposed) expanded?.refresh()
+            })
+          },
+          { signal: dialogEvents.signal },
+        )
+        actions.append(fullscreen)
+      }
+      actions.append(close)
+      header.append(title, actions)
+      const { stage: largeStage, viewport: largeViewport } = createStage()
+      largeViewport.classList.add("pele-expanded-viewport")
+      largeViewport.setAttribute("aria-label", "Expanded diagram")
+      content.append(header, largeStage)
       document.body.append(dialog)
       close.addEventListener("click", () => dialog?.close(), { signal: dialogEvents.signal })
-      dialog.addEventListener("close", () => closeExpanded(), {
-        once: true,
-        signal: dialogEvents.signal,
-      })
-      // Pele consumes Escape to reset a zoomed viewport. Capture it first so one
-      // key press always dismisses the modal, even when the diagram has focus.
+      dialog.addEventListener(
+        "close",
+        () => {
+          if (document.fullscreenElement === content) void document.exitFullscreen().catch(() => {})
+          if (returnFocus?.isConnected) returnFocus.focus()
+          returnFocus = undefined
+          // Keep this mount alive while hidden to retain its zoom and pan on reopen.
+        },
+        { signal: dialogEvents.signal },
+      )
+      // Dismiss before Pele consumes Escape to reset zoom. Browser fullscreen
+      // can consume its first Escape before JavaScript receives the key.
       dialog.addEventListener(
         "keydown",
         (event) => {
@@ -202,11 +371,13 @@ function enhance(figure: HTMLElement) {
     disposed = true
     events.abort()
     clearTimeout(copyTimer)
-    closeExpanded(false)
+    for (const observer of layoutObservers) observer.disconnect()
+    layoutObservers.clear()
+    disposeExpanded()
     for (const mounted of mounts) mounted.destroy()
     mounts.clear()
     controls.remove()
-    viewport.remove()
+    stage.remove()
     original.hidden = wasHidden
   })
 }

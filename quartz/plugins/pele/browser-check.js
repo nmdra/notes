@@ -24,27 +24,38 @@ async function checkPele(page) {
     await page.goto(base, { waitUntil: "domcontentloaded" })
     await page.context().grantPermissions(["clipboard-read", "clipboard-write"])
     await page.emulateMedia({ reducedMotion: "reduce" })
-    const source = '\nflowchart LR\n  A["Read<br/>source & test"] --> B[Render]\n'
-    await page.evaluate((source) => {
-      const host = document.createElement("section")
-      host.id = "pele-browser-fixture"
-      for (const text of [
-        source,
-        "sequenceDiagram\n Alice->>Bob: Hello",
-        "not a diagram <img src=x onerror=alert(1)>",
-      ]) {
-        const figure = document.createElement("figure")
-        figure.className = "pele-diagram"
-        const pre = document.createElement("pre")
-        pre.className = "pele-source"
-        const span = document.createElement("span")
-        span.textContent = text
-        pre.append(span)
-        figure.append(pre)
-        host.append(figure)
-      }
-      document.querySelector("article").replaceChildren(host)
-    }, source)
+    const source =
+      '\nflowchart LR\n  A["Read<br/>source & test"] --> B[Render]\n  classDef authored fill:#fff,color:#820000;\n  class B authored\n'
+    const wideSource = [
+      "sequenceDiagram",
+      ...Array.from({ length: 24 }, (_, i) => `participant P${i} as Service ${i + 1} coordinator`),
+      "P0->>P23: Request with detailed routing metadata",
+    ].join("\n")
+    await page.evaluate(
+      ({ source, wideSource }) => {
+        const host = document.createElement("section")
+        host.id = "pele-browser-fixture"
+        for (const text of [
+          source,
+          "sequenceDiagram\n Alice->>Bob: Hello",
+          "not a diagram <img src=x onerror=alert(1)>",
+          wideSource,
+          'pie title Example proportions\n "First category with a longer label" : 40\n "Second category" : 60',
+        ]) {
+          const figure = document.createElement("figure")
+          figure.className = "pele-diagram"
+          const pre = document.createElement("pre")
+          pre.className = "pele-source"
+          const span = document.createElement("span")
+          span.textContent = text
+          pre.append(span)
+          figure.append(pre)
+          host.append(figure)
+        }
+        document.querySelector("article").replaceChildren(host)
+      },
+      { source, wideSource },
+    )
     const figures = page.locator("#pele-browser-fixture > figure")
     await figures.first().locator(".pele-viewport > svg.pele").waitFor()
     await figures.nth(1).locator(".pele-viewport > svg.pele").waitFor()
@@ -64,6 +75,8 @@ async function checkPele(page) {
           title: button.getAttribute("title"),
           label: button.getAttribute("aria-label"),
           iconHidden: button.querySelector("svg")?.getAttribute("aria-hidden"),
+          iconWidth: button.querySelector("svg")?.getBoundingClientRect().width,
+          iconHeight: button.querySelector("svg")?.getBoundingClientRect().height,
           width: button.getBoundingClientRect().width,
           height: button.getBoundingClientRect().height,
         })),
@@ -75,6 +88,8 @@ async function checkPele(page) {
             control.text === "" &&
             control.title === control.label &&
             control.iconHidden === "true" &&
+            control.iconWidth === 16 &&
+            control.iconHeight === 16 &&
             control.width === 28 &&
             control.height === 28,
         ),
@@ -105,8 +120,47 @@ async function checkPele(page) {
       (await page.evaluate(() => navigator.clipboard.readText())) === source,
       "Copy changed raw source",
     )
-    const viewport = figures.first().locator(".pele-viewport")
-    const svg = viewport.locator(":scope > svg.pele")
+    const smallViewport = figures.first().locator(".pele-stage")
+    await figures.nth(3).locator(".pele-stage > .pele-viewport > svg.pele").waitFor()
+    check(
+      !(await smallViewport.getByRole("button", { name: "Zoom in", exact: true }).isVisible()),
+      "Fitting small diagram has visible zoom controls",
+    )
+    check(
+      !(await figures.first().locator(".pele-help").isVisible()),
+      "Fitting small diagram has visible zoom help",
+    )
+    const viewport = figures.nth(3).locator(".pele-stage")
+    const checkControlRow = async (target, context) => {
+      await target.getByRole("button", { name: "Zoom in", exact: true }).waitFor()
+      check(
+        await target.evaluate((el) => {
+          const mount = el.querySelector(":scope > .pele-viewport")
+          const svg = mount.querySelector(":scope > svg.pele")
+          const zoom = el.querySelector(":scope > .pele-zoom-slot > .pele-zoom")
+          if (!svg || !zoom || zoom.hidden) return false
+          const bounds = el.getBoundingClientRect()
+          const controls = zoom.getBoundingClientRect()
+          const diagram = svg.getBoundingClientRect()
+          return (
+            mount.firstElementChild === svg &&
+            controls.bottom <= diagram.top + 0.5 &&
+            controls.bottom <= mount.getBoundingClientRect().top + 0.5 &&
+            controls.top >= bounds.top &&
+            controls.bottom <= bounds.bottom &&
+            controls.left >= bounds.left &&
+            controls.right <= bounds.right &&
+            [...zoom.querySelectorAll("button")].every((button) => {
+              const box = button.getBoundingClientRect()
+              return box.height === 0 || (box.width === 24 && box.height === 24)
+            })
+          )
+        }),
+        `Native control row overlaps the SVG, is clipped, or changed size: ${context}`,
+      )
+    }
+    await checkControlRow(viewport, "initial wide diagram")
+    const svg = viewport.locator(".pele-viewport > svg.pele")
     const nativeSize = await viewport
       .getByRole("button", { name: "Zoom in", exact: true })
       .boundingBox()
@@ -117,35 +171,133 @@ async function checkPele(page) {
     const beforeZoom = await svg.getAttribute("style")
     await viewport.getByRole("button", { name: "Zoom in", exact: true }).click()
     check((await svg.getAttribute("style")) !== beforeZoom, "Zoom in had no effect")
+    check(
+      await viewport
+        .getByRole("button", { name: "Zoom in", exact: true })
+        .evaluate((el) => el === document.activeElement),
+      "Native zoom button lost focus",
+    )
+    const beforeKeyboardZoom = await svg.getAttribute("viewBox")
+    await page.keyboard.press("Enter")
+    check(
+      (await svg.getAttribute("viewBox")) !== beforeKeyboardZoom,
+      "Native zoom button lost keyboard activation",
+    )
+    check(
+      await viewport.locator(".pele-viewport").evaluate((el) => {
+        const svg = el.querySelector(":scope > svg.pele").getBoundingClientRect()
+        const pane = el.getBoundingClientRect()
+        return svg.top >= pane.top - 1 && svg.bottom <= pane.bottom + 1
+      }),
+      "Short wide diagram is clipped after zoom",
+    )
     await svg.focus()
     const beforePan = await svg.getAttribute("viewBox")
     await page.keyboard.press("ArrowRight")
     check((await svg.getAttribute("viewBox")) !== beforePan, "Keyboard pan had no effect")
-    check(
-      await viewport.evaluate((el) => {
-        const bounds = el.getBoundingClientRect()
-        return [...el.querySelectorAll("button")].every((button) => {
-          const box = button.getBoundingClientRect()
-          return box.height === 0 || (box.top >= bounds.top && box.bottom <= bounds.bottom)
-        })
-      }),
-      "Zoom controls are clipped by a short diagram viewport",
-    )
+    await checkControlRow(viewport, "after zoom and keyboard pan")
     await viewport.getByRole("button", { name: "Reset zoom" }).click()
+    await checkControlRow(viewport, "after reset")
     const viewports = []
     for (const width of [320, 375, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 })
+      const explorerToggle = page.locator("button.mobile-explorer").first()
+      if (
+        (await explorerToggle.isVisible()) &&
+        (await explorerToggle.evaluate(
+          (el) => !el.closest(".explorer").classList.contains("collapsed"),
+        ))
+      ) {
+        await explorerToggle.click()
+      }
       await page.waitForTimeout(200)
+      await checkControlRow(viewport, `resize to ${width}`)
+      await viewport.getByRole("button", { name: "Zoom in", exact: true }).click()
+      await checkControlRow(viewport, `zoom at ${width}`)
+      await viewport.getByRole("button", { name: "Reset zoom" }).click()
+      await checkControlRow(viewport, `reset at ${width}`)
+      check(
+        await figures
+          .nth(4)
+          .locator(".pele-viewport")
+          .evaluate((el) => {
+            const svg = el.querySelector(":scope > svg.pele")
+            const style = getComputedStyle(el)
+            const expected =
+              svg.getBoundingClientRect().height +
+              parseFloat(style.paddingTop) +
+              parseFloat(style.paddingBottom)
+            return (
+              Math.abs(parseFloat(style.getPropertyValue("--pele-content-height")) - expected) <= 1
+            )
+          }),
+        `Non-reflowing chart height is stale at ${width}`,
+      )
       for (const theme of ["light", "dark"]) {
         const result = await page.evaluate(async (theme) => {
-          document.documentElement.setAttribute("saved-theme", theme)
           const svg = document.querySelector("#pele-browser-fixture svg.pele")
           const previous = svg
+          document.documentElement.setAttribute("saved-theme", theme)
           await new Promise((resolve) =>
             requestAnimationFrame(() => requestAnimationFrame(resolve)),
           )
           const figure = document.querySelector("#pele-browser-fixture > figure")
+          // Resolve CSS variables and color-mix through the browser, then use
+          // canvas to normalize modern CSS colors to sRGB for contrast checks.
+          const canvas = document.createElement("canvas")
+          canvas.width = canvas.height = 1
+          const ctx = canvas.getContext("2d", { willReadFrequently: true })
+          const rgba = (color) => {
+            ctx.clearRect(0, 0, 1, 1)
+            ctx.fillStyle = color
+            ctx.fillRect(0, 0, 1, 1)
+            return [...ctx.getImageData(0, 0, 1, 1).data]
+          }
+          const probe = document.createElement("span")
+          figure.append(probe)
+          const resolve = (name) => {
+            probe.style.color = `var(${name})`
+            return rgba(getComputedStyle(probe).color)
+          }
+          const series = Array.from({ length: 8 }, (_, i) => resolve(`--pele-series-${i + 1}`))
+          const foreground = resolve("--pele-fg")
+          const background = resolve("--pele-bg")
+          probe.remove()
+          const shape = svg.querySelector(".pele-node rect, .pele-node path, .pele-node polygon")
+          const fill = shape ? rgba(getComputedStyle(shape).fill) : [0, 0, 0, 0]
+          const text = svg.querySelector(".pele-node text")
+          const textColor = text ? rgba(getComputedStyle(text).fill) : foreground
+          const luminance = (color) =>
+            color
+              .slice(0, 3)
+              .map((value) => {
+                const channel = value / 255
+                return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+              })
+              .reduce((total, value, i) => total + value * [0.2126, 0.7152, 0.0722][i], 0)
+          const l1 = luminance(textColor)
+          const l2 = luminance(fill)
+          const pie = document.querySelectorAll("#pele-browser-fixture > figure")[4]
+          const sliceText = rgba(
+            getComputedStyle(pie.querySelector(".pele-slice-labels text")).fill,
+          )
+          const sliceLuminance = luminance(sliceText)
+          const seriesContrasts = series.map((color) => {
+            const value = luminance(color)
+            return (
+              (Math.max(value, sliceLuminance) + 0.05) / (Math.min(value, sliceLuminance) + 0.05)
+            )
+          })
+          const authored = [...svg.querySelectorAll(".pele-node text")].find(
+            (text) => text.textContent === "Render",
+          )
           return {
+            authoredColor: rgba(getComputedStyle(authored).fill),
+            sliceUsesBackground: sliceText.join(",") === background.join(","),
+            seriesContrasts,
+            fill,
+            series,
+            contrast: (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05),
             width: Math.round(figure.getBoundingClientRect().width),
             viewport: innerWidth,
             svgWidth: svg.getBoundingClientRect().width,
@@ -155,10 +307,29 @@ async function checkPele(page) {
         }, theme)
         check(result.width <= width && result.svgWidth > 0, `Invalid diagram geometry at ${width}`)
         check(result.sameSvg, "Theme color change replaced the SVG")
-        viewports.push({ width, theme, color: result.color })
+        check(
+          result.authoredColor.join(",") === "130,0,0,255",
+          `Authored text color was overridden in ${theme}`,
+        )
+        check(
+          result.sliceUsesBackground && result.seriesContrasts.every((value) => value >= 4.5),
+          `Chart percentage contrast is below 4.5 in ${theme}`,
+        )
+        check(result.fill[3] === 255, `Default node fill is transparent in ${theme}`)
+        check(result.contrast >= 4.5, `Default node text contrast is below 4.5 in ${theme}`)
+        check(
+          result.series.every((color) => color[3] === 255) &&
+            new Set(result.series.map((color) => color.join(","))).size === 8,
+          `Theme does not provide eight distinct opaque series colors in ${theme}`,
+        )
+        viewports.push({ width, theme, color: result.color, series: result.series })
       }
     }
     check(viewports[0].color !== viewports[1].color, "Theme did not change diagram colors")
+    check(
+      viewports[0].series.every((color, i) => color.join(",") !== viewports[1].series[i].join(",")),
+      "Theme did not change all eight series colors",
+    )
     const expand = figures.first().getByRole("button", { name: "Expand diagram" })
     await expand.click()
     const dialog = page.getByRole("dialog", { name: "Expanded diagram" })
@@ -173,26 +344,71 @@ async function checkPele(page) {
         .evaluate((el) => el === document.activeElement),
       "Dialog did not focus close control",
     )
-    await dialog.getByRole("button", { name: "Zoom in", exact: true }).click()
+    const smallDialogBounds = await dialog.boundingBox()
+    check(smallDialogBounds.height < 450, "Small expanded diagram leaves excessive empty height")
+    check(
+      !(await dialog.getByRole("button", { name: "Zoom in", exact: true }).isVisible()),
+      "Fitting small expanded diagram has visible zoom controls",
+    )
+    const fullscreen = dialog.getByRole("button", { name: "Enter fullscreen", exact: true })
+    let fullscreenChecked = false
+    if (await page.evaluate(() => document.fullscreenEnabled)) {
+      await fullscreen.click()
+      await page.waitForFunction(() => document.fullscreenElement?.matches(".pele-dialog-content"))
+      await dialog.getByRole("button", { name: "Exit fullscreen", exact: true }).click()
+      await page.waitForFunction(() => !document.fullscreenElement)
+      await fullscreen.waitFor()
+      fullscreenChecked = true
+    }
     await dialog.locator(".pele-viewport > svg.pele").focus()
     await page.keyboard.press("Escape")
-    await dialog.waitFor({ state: "detached" })
+    await dialog.waitFor({ state: "hidden" })
     check(
       await expand.evaluate((el) => el === document.activeElement),
       "Dialog did not restore focus",
     )
+    // A wide modal must retain its actual mounted SVG and pan/zoom state.
+    const wideExpand = figures.nth(3).getByRole("button", { name: "Expand diagram" })
+    await wideExpand.click()
+    const wideDialog = page.getByRole("dialog", { name: "Expanded diagram" })
+    const wideViewport = wideDialog.locator(".pele-stage")
+    await checkControlRow(wideViewport, "wide modal initial")
+    await wideViewport.getByRole("button", { name: "Zoom in", exact: true }).click()
+    const wideSvg = wideViewport.locator(".pele-viewport > svg.pele")
+    await wideSvg.focus()
+    await page.keyboard.press("ArrowRight")
+    await checkControlRow(wideViewport, "wide modal zoom and pan")
+    const retainedSvg = await wideSvg.elementHandle()
+    const retainedStyle = await wideSvg.getAttribute("style")
+    const retainedViewBox = await wideSvg.getAttribute("viewBox")
+    await page.keyboard.press("Escape")
+    await wideDialog.waitFor({ state: "hidden" })
+    check(await retainedSvg.evaluate((svg) => svg.isConnected), "Closing modal destroyed its SVG")
+    await wideExpand.click()
+    await wideDialog.waitFor()
+    check(
+      await wideSvg.evaluate((svg, previous) => svg === previous, retainedSvg),
+      "Reopening replaced the mounted SVG",
+    )
+    check((await wideSvg.getAttribute("style")) === retainedStyle, "Reopening lost zoom state")
+    check((await wideSvg.getAttribute("viewBox")) === retainedViewBox, "Reopening lost pan state")
+    await checkControlRow(wideViewport, "wide modal reopened")
+    await wideViewport.getByRole("button", { name: "Reset zoom" }).click()
+    await checkControlRow(wideViewport, "wide modal reset")
+    await wideDialog.getByRole("button", { name: "Close expanded diagram" }).click()
+    await retainedSvg.dispose()
     await page.evaluate(() => {
       const host = document.querySelector("#pele-browser-fixture")
       host.append(host.firstElementChild.cloneNode(true))
       document.dispatchEvent(new CustomEvent("render"))
       document.dispatchEvent(new CustomEvent("nav"))
     })
-    await figures.nth(3).locator(".pele-viewport > svg.pele").waitFor()
+    await figures.nth(5).locator(".pele-viewport > svg.pele").waitFor()
     check(
-      (await figures.nth(3).locator(".pele-toolbar").count()) === 1,
+      (await figures.nth(5).locator(".pele-toolbar").count()) === 1,
       "Clone has duplicate controls",
     )
-    await figures.nth(3).getByRole("button", { name: "Copy diagram source" }).click()
+    await figures.nth(5).getByRole("button", { name: "Copy diagram source" }).click()
     check(
       (await page.evaluate(() => navigator.clipboard.readText())) === source,
       "Cloned source changed",
@@ -220,15 +436,27 @@ async function checkPele(page) {
     return {
       passed: true,
       viewportThemeChecks: viewports.length,
+      fullscreenChecked,
       checks: [
         "compact-accessible-icons",
+        "auto-zoom-when-shrunk",
         "native-zoom-sizing",
+        "native-keyboard-focus",
+        "short-wide-zoom-no-clipping",
+        "nonoverlapping-control-row",
         "copy-checkmark",
         "source-copy",
         "safe-errors",
         "zoom-reset",
         "responsive-layout",
         "theme-without-rerender",
+        "opaque-node-fill-and-text-contrast",
+        "eight-series-theme-colors",
+        "chart-slice-contrast",
+        "authored-colors",
+        "non-reflowing-chart-height",
+        "content-sized-small-modal",
+        "modal-state-retention",
         "modal-escape-focus",
         "clone-remount",
         "SPA-cleanup",

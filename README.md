@@ -109,9 +109,17 @@ content-hashed assets. OFM keeps handling wikilinks, callouts, and other Obsidia
 features, with only its `mermaid` option disabled in `quartz.config.yaml`.
 
 Diagrams adapt to their container and use the site theme colors and fonts.
-Readers can copy the source, zoom and pan inline, or open an expanded view.
-Escape closes the expanded view and returns focus to its opener. Invalid diagrams
-show a text error and selectable source.
+Readers can copy the source or open an expanded view. Pele's `zoom: "auto"`
+enables zoom and pan only when a diagram shrinks to fit; native controls occupy
+their own row instead of covering nodes. Expanded views fit their content and
+retain zoom and pan between openings at the same size on the same page. Browser
+fullscreen is available where supported. Escape closes the expanded view and
+returns focus to its opener; fullscreen can consume the first Escape press.
+Invalid diagrams show a text error and selectable source.
+
+Diagram colors use soft, theme-aware node and subgraph fills, readable borders,
+and eight chart-series colors for light and dark mode. Explicit Mermaid `style`
+and `classDef` colors remain author-controlled.
 
 Pele uses its own layout engine, so its output differs from Mermaid.js. Mermaid
 `themeVariables` do not transfer to the site theme. Fixed diagram colors remain

@@ -3,21 +3,41 @@
   --pele-bg: var(--light);
   --pele-fg: var(--dark);
   --pele-muted: var(--darkgray);
-  --pele-line: var(--darkgray);
-  --pele-surface: var(--lightgray);
-  --pele-surface-alt: var(--highlight);
-  --pele-border: var(--gray);
+  --pele-line: var(--dark);
+  --pele-surface: color-mix(in srgb, var(--light) 90%, var(--secondary) 10%);
+  --pele-surface-alt: color-mix(in srgb, var(--light) 94%, var(--tertiary) 6%);
+  --pele-border: var(--darkgray);
   --pele-accent: var(--secondary);
   --pele-font: var(--bodyFont);
   --pele-font-mono: var(--codeFont);
   --pele-radius: 5px;
-  --pele-series-1: var(--secondary);
-  --pele-series-2: var(--tertiary);
-  --pele-series-3: var(--darkgray);
-  --pele-series-4: var(--gray);
+  --pele-critical: #b53b52;
+  --pele-error: #b53b52;
+  --pele-series-1: #1b5ee0;
+  --pele-series-2: #7530c5;
+  --pele-series-3: #247647;
+  --pele-series-4: #b53b52;
+  --pele-series-5: #156e7d;
+  --pele-series-6: #945b16;
+  --pele-series-7: #a23b83;
+  --pele-series-8: #4b5a91;
   color: var(--dark);
   font-family: var(--bodyFont);
   box-sizing: border-box;
+}
+
+:root[saved-theme="dark"] .pele-diagram,
+:root[saved-theme="dark"] .pele-dialog {
+  --pele-critical: var(--ctp-mocha-red, #f38ba8);
+  --pele-error: var(--ctp-mocha-red, #f38ba8);
+  --pele-series-1: var(--ctp-mocha-blue, #89b4fa);
+  --pele-series-2: var(--ctp-mocha-mauve, #cba6f7);
+  --pele-series-3: var(--ctp-mocha-green, #a6e3a1);
+  --pele-series-4: var(--ctp-mocha-red, #f38ba8);
+  --pele-series-5: var(--ctp-mocha-teal, #94e2d5);
+  --pele-series-6: var(--ctp-mocha-peach, #fab387);
+  --pele-series-7: var(--ctp-mocha-yellow, #f9e2af);
+  --pele-series-8: var(--ctp-mocha-lavender, #b4befe);
 }
 
 .pele-diagram .pele-icon-button,
@@ -58,12 +78,15 @@
 .pele-diagram .pele-viewport,
 .pele-dialog .pele-viewport {
   position: relative;
+  display: block;
   width: 100%;
   min-width: 0;
-  /* Leave room for Pele's native 24px controls, including reset. */
-  min-height: 6rem;
+  height: var(--pele-content-height, auto);
+  min-height: 4rem;
   max-height: 70vh;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
   overscroll-behavior-x: contain;
   box-sizing: border-box;
   padding: 0.5rem;
@@ -72,7 +95,61 @@
 .pele-diagram .pele-viewport > svg.pele,
 .pele-dialog .pele-viewport > svg.pele {
   display: block;
-  margin-inline: auto;
+  min-width: 0;
+  margin: 0 auto;
+}
+
+/* Restore Pele's inherited label colors instead of Quartz's global text fill.
+   Explicit presentation fills are retained as inline styles by onRender. */
+.pele-diagram svg.pele text,
+.pele-dialog svg.pele text {
+  color: inherit;
+  fill: inherit;
+}
+
+/* The native panel sits outside Pele's measured drawing area. */
+.pele-diagram .pele-zoom-slot,
+.pele-dialog .pele-zoom-slot {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem 0.5rem 0;
+}
+
+.pele-diagram .pele-zoom-slot[hidden],
+.pele-dialog .pele-zoom-slot[hidden] {
+  display: none;
+}
+
+.pele-diagram .pele-zoom-slot > .pele-zoom,
+.pele-dialog .pele-zoom-slot > .pele-zoom {
+  position: static !important;
+  flex-direction: row !important;
+}
+
+.pele-diagram .pele-stage button[class^="pele-zoom-"],
+.pele-dialog .pele-stage button[class^="pele-zoom-"] {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.pele-diagram .pele-stage,
+.pele-dialog .pele-stage {
+  min-width: 0;
+  min-height: 0;
+}
+
+.pele-diagram .pele-help,
+.pele-dialog .pele-help {
+  margin: 0;
+  padding: 0.25rem 0.5rem 0.5rem;
+  color: var(--pele-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.pele-diagram .pele-help[hidden],
+.pele-dialog .pele-help[hidden] {
+  display: none;
 }
 
 .pele-diagram .pele-error,
@@ -125,7 +202,8 @@ figure.pele-diagram .pele-status.is-error {
 }
 
 .pele-dialog {
-  width: min(96vw, 90rem);
+  width: min(96vw, var(--pele-dialog-width, 90rem));
+  height: fit-content;
   max-width: 96vw;
   max-height: 94vh;
   max-height: 94dvh;
@@ -155,10 +233,44 @@ figure.pele-diagram .pele-status.is-error {
   font-size: 1rem;
 }
 
+.pele-dialog .pele-dialog-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .pele-dialog .pele-expanded-viewport {
-  height: 78vh;
-  height: 78dvh;
-  max-height: none;
+  max-height: calc(94vh - 8rem);
+  max-height: calc(94dvh - 8rem);
+}
+
+.pele-dialog-content:fullscreen {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  max-width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  background: var(--light);
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.pele-dialog-content:fullscreen .pele-dialog-header {
+  flex: 0 0 auto;
+}
+
+.pele-dialog-content:fullscreen .pele-stage {
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+.pele-dialog-content:fullscreen .pele-expanded-viewport {
+  max-height: calc(100vh - 8rem);
+  max-height: calc(100dvh - 8rem);
 }
 
 @media (pointer: coarse) {
@@ -169,15 +281,10 @@ figure.pele-diagram .pele-status.is-error {
   }
 
   /* Preserve Pele's native controls, with slightly larger touch targets. */
-  .pele-diagram .pele-viewport button[class^="pele-zoom-"],
-  .pele-dialog .pele-viewport button[class^="pele-zoom-"] {
+  .pele-diagram .pele-stage button[class^="pele-zoom-"],
+  .pele-dialog .pele-stage button[class^="pele-zoom-"] {
     width: 32px !important;
     height: 32px !important;
-  }
-
-  .pele-diagram .pele-viewport,
-  .pele-dialog .pele-viewport {
-    min-height: 8rem;
   }
 }
 
