@@ -56,8 +56,7 @@ function createStage() {
   help.className = "pele-help"
   help.id = `quartz-pele-help-${++nextId}`
   help.hidden = true
-  help.textContent =
-    "Pinch or Ctrl/⌘ + scroll to zoom. Drag to pan. Use +, −, 0 and arrow keys when focused."
+  help.textContent = "Pinch or Ctrl/⌘ + scroll to zoom. Drag to pan."
   const zoomSlot = document.createElement("div")
   zoomSlot.className = "pele-zoom-slot"
   zoomSlot.hidden = true

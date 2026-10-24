@@ -5,6 +5,29 @@ and deployed to GitHub Pages.
 
 **Site:** https://notes.nimendra.online
 
+## Site features
+
+This site adds local plugins, a custom reading layout, and a selective publishing
+pipeline on top of Quartz.
+
+| Local addition                                              | What it provides                                                                                         |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| [Pele diagrams](#diagrams)                                  | Locally bundled Mermaid-compatible rendering, automatic zoom, source copy, and expanded/fullscreen views |
+| [Image zoom](#image-zoom)                                   | Click and keyboard image enlargement with a close control and focus restoration                          |
+| [Copy note link](#copy-note-link)                           | A compact title-row button that copies the note title and public URL                                     |
+| [Unavailable-link notices](#unavailable-link-notices)       | Feedback for links to unpublished pages or blocked document formats                                      |
+| [Homepage and reading layout](#homepage-and-reading-layout) | Linked topic cards, responsive listings, and sidebar layout adjustments                                  |
+| [Catppuccin styling](#theme-and-callouts)                   | Light/dark colors, tag chips, callout styling, and a video callout                                       |
+| [Selective publishing](#what-gets-published)                | Folder includes/exclusions, referenced-media sync, validated canvases, and blocked-file checks           |
+| [Site guide](templates/llms.txt)                            | A maintained `llms.txt` template copied to the published site root                                       |
+
+Configured Quartz/community features include search with previews, Explorer,
+breadcrumbs, local/global graphs, backlinks, popovers, a table of contents,
+reader mode, KaTeX, alias redirects, RSS, and a sitemap. Community plugins also
+provide canvas pages, draft/unlisted-page handling, and encrypted pages. These
+are configured dependencies, not locally implemented plugins. Do not assume
+that encrypted pages hide their titles or all page metadata.
+
 ## What gets published
 
 [`publish.list`](publish.list) selects vault-relative folders. For example:
@@ -87,6 +110,58 @@ Set `VAULT_PATH` as an alternative to `--vault`. One of these is required; the
 previous machine-specific vault default has been removed. Keep local environment
 files and private checkouts out of Git.
 
+## Custom reader features
+
+### Image zoom
+
+The local [image-zoom plugin](quartz/plugins/image-zoom/) enlarges images in note
+content. Click an eligible image, or focus it and press **Enter** or **Space**.
+Use **Escape** or the close button to dismiss it. The integration restores focus
+and refreshes its image bindings after SPA navigation.
+
+Linked images keep their existing link behavior. Homepage cards, tag-page
+images, and listing images are excluded from zoom selection.
+
+### Copy note link
+
+The local [share-button plugin](quartz/plugins/share-button/) adds an icon beside
+note titles. **Copy note link** copies the title and public URL on separate
+lines. It removes query strings and fragments from the URL. If clipboard access
+fails or is unavailable, a selectable field provides the same text for manual
+copying. The button is omitted from homepage, folder, tag, canvas, and error-page
+layouts.
+
+### Unavailable-link notices
+
+The local [link-notice plugin](quartz/plugins/link-notice/) shows a notice when a
+reader activates a broken internal link or a link to a blocked document format.
+This avoids sending readers to destinations that are not available on the site.
+It does **not** redact the link text, destination, or private information from
+published output.
+
+### Homepage and reading layout
+
+[`templates/index.md`](templates/index.md) supplies the homepage introduction and
+linked topic directory. A configured community component adds five recently
+updated notes below it. Custom CSS provides responsive topic and folder/tag
+cards, Explorer emphasis, and separate scrolling areas for long sidebar content
+so the graph can remain visible.
+
+Keep homepage topic links aligned with the published routes and the route
+exceptions in the link-notice plugin. Update the template rather than generated
+`content/index.md`.
+
+### Theme and callouts
+
+[`quartz/styles/custom.scss`](quartz/styles/custom.scss) and the local Catppuccin
+styles extend the configured light/dark palette. They style links, tag chips,
+blockquotes, callouts, listings, and mobile layouts. The custom `[!video]`
+callout uses a video-camera icon and theme-aware red accents. OFM still handles
+callout parsing and supported video/YouTube embeds.
+
+Theme colors and fonts are configured in [`quartz.config.yaml`](quartz.config.yaml).
+The reader-facing dark-mode and reader-mode controls come from community plugins.
+
 ## Layout
 
 | Path                             | Purpose                                             |
@@ -99,14 +174,31 @@ files and private checkouts out of Git.
 | `templates/llms.txt`             | Site overview                                       |
 | `quartz.config.yaml`             | Site configuration and plugin selection             |
 | `quartz/styles/custom.scss`      | Site-specific CSS                                   |
+| `quartz/plugins/pele/`           | Local diagram renderer and browser checks           |
+| `quartz/plugins/image-zoom/`     | Note-image enlargement                              |
+| `quartz/plugins/share-button/`   | Title-row copy-link control                         |
+| `quartz/plugins/link-notice/`    | Unavailable-link feedback                           |
 | `.github/workflows/deploy.yml`   | Trusted publication workflow                        |
 
 ## Diagrams
 
 Mermaid fences render with [Pele](https://pele.run/) through the local
-`quartz/plugins/pele` transformer. The renderer is pinned and bundled into local,
-content-hashed assets. OFM keeps handling wikilinks, callouts, and other Obsidian
-features, with only its `mermaid` option disabled in `quartz.config.yaml`.
+[`quartz/plugins/pele`](quartz/plugins/pele/) transformer. Pele **1.9.0** is pinned
+and bundled into local, content-hashed assets. The renderer does not load from a
+runtime CDN. OFM keeps handling wikilinks, callouts, and other Obsidian features,
+with only its `mermaid` option disabled in `quartz.config.yaml`.
+
+Keep using ordinary Mermaid fences in notes; no diagram export step is needed:
+
+````markdown
+```mermaid
+flowchart LR
+  A[Write a note] --> B[Publish with Quartz] --> C[Render with Pele]
+```
+````
+
+The browser integration uses Pele's mount/render lifecycle, cleans up during SPA
+navigation, and mounts dynamically inserted diagrams and cloned popovers.
 
 Diagrams adapt to their container and use the site theme colors and fonts.
 Readers can copy the source or open an expanded view. Pele's `zoom: "auto"`
