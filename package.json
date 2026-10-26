@@ -104,7 +104,7 @@
     "pele": "1.9.0",
     "preact": "^10.28.2",
     "preact-render-to-string": "^6.8.1",
-    "pretty-bytes": "^7.1.0",
+    "pretty-bytes": "^7.2.0",
     "pretty-time": "^1.1.0",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
