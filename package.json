@@ -119,7 +119,7 @@
     "workerpool": "^10.0.1",
     "ws": "^8.19.0",
     "yaml": "^2.8.2",
-    "yargs": "^18.0.0"
+    "yargs": "^18.2.0"
   },
   "devDependencies": {
     "@quartz-community/types": "^1.0.0",
