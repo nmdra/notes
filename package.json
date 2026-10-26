@@ -117,7 +117,7 @@
     "unist-util-visit": "^5.1.0",
     "vfile": "^6.0.3",
     "workerpool": "^10.0.1",
-    "ws": "^8.19.0",
+    "ws": "^8.22.0",
     "yaml": "^2.8.2",
     "yargs": "^18.0.0"
   },
@@ -128,7 +128,7 @@
     "@types/node": "^26.5.1",
     "@types/pretty-time": "^1.1.5",
     "@types/source-map-support": "^0.5.10",
-    "@types/ws": "^8.18.1",
+    "@types/ws": "^8.18.2",
     "@types/yargs": "^17.0.35",
     "esbuild": "^0.28.2",
     "prettier": "^3.8.1",
