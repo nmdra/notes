@@ -102,7 +102,7 @@
     "micromorph": "^0.4.5",
     "minimatch": "^10.1.1",
     "pele": "1.12.0",
-    "preact": "^10.28.2",
+    "preact": "^11.1.0",
     "preact-render-to-string": "^6.8.2",
     "pretty-bytes": "^7.2.0",
     "pretty-time": "^1.1.0",
