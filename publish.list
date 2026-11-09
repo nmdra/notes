@@ -10,11 +10,16 @@
 00.Fleeting Notes/Site Reliability Engineering/Observebility
 02.Areas/DevOps/Docker
 02.Areas/Software Engineering/gRPC
+02.Areas/Software Engineering/Design Patterns
 02.Areas/Software Engineering/Go Notes/Learning Go
 02.Areas/Kubernetes/K8s-Primer
 02.Areas/Platform Engineering
 02.Areas/DevOps/CaC & IaC
 05.Books & Others
+02.Areas/Kubernetes
+01.Projects/Distributed System
+01.Projects/System Design
 
 # kept private
 !02.Areas/Platform Engineering/Effective Platform Engineering
+!02.Areas/Kubernetes/Linux-Docker-K8s-Networking
