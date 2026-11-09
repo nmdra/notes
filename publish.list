@@ -22,4 +22,4 @@
 
 # kept private
 !02.Areas/Platform Engineering/Effective Platform Engineering
-!02.Areas/Kubernetes/Linux-Docker-K8s-Networking
+!02.Areas/Kubernetes/Kubernetes-Hard-Way
