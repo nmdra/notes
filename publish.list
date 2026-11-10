@@ -19,6 +19,8 @@
 02.Areas/Kubernetes
 01.Projects/Distributed System
 01.Projects/System Design
+00.Fleeting Notes/Site Reliability Engineering
+00.Fleeting Notes/eBPF
 
 # kept private
 !02.Areas/Platform Engineering/Effective Platform Engineering
