@@ -51,7 +51,7 @@
     "@quartz-community/cname": "^1.0.0",
     "@quartz-community/comments": "^1.0.0",
     "@quartz-community/content-index": "^1.0.0",
-    "@quartz-community/content-meta": "^1.0.0",
+    "@quartz-community/content-meta": "^1.0.2",
     "@quartz-community/content-page": "^1.0.0",
     "@quartz-community/crawl-links": "^1.0.0",
     "@quartz-community/created-modified-date": "^1.0.0",
