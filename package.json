@@ -44,7 +44,7 @@
     "@quartz-community/alias-redirects": "^1.0.0",
     "@quartz-community/article-title": "^1.0.0",
     "@quartz-community/backlinks": "^1.0.0",
-    "@quartz-community/bases-page": "^1.0.0",
+    "@quartz-community/bases-page": "^1.3.0",
     "@quartz-community/breadcrumbs": "^1.0.0",
     "@quartz-community/canvas-page": "^1.0.0",
     "@quartz-community/citations": "^1.0.0",
