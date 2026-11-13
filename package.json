@@ -77,7 +77,7 @@
     "@quartz-community/recent-notes": "^1.0.0",
     "@quartz-community/remove-draft": "^1.0.0",
     "@quartz-community/roam": "^1.0.0",
-    "@quartz-community/search": "^1.0.0",
+    "@quartz-community/search": "^1.0.3",
     "@quartz-community/spacer": "^1.0.0",
     "@quartz-community/stacked-pages": "^1.0.0",
     "@quartz-community/syntax-highlighting": "^1.0.1",
