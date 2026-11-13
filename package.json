@@ -74,7 +74,7 @@
     "@quartz-community/page-title": "^1.0.0",
     "@quartz-community/quartz-fonts": "^1.0.0",
     "@quartz-community/reader-mode": "^1.0.0",
-    "@quartz-community/recent-notes": "^1.0.0",
+    "@quartz-community/recent-notes": "^1.0.3",
     "@quartz-community/remove-draft": "^1.0.0",
     "@quartz-community/roam": "^1.0.0",
     "@quartz-community/search": "^1.0.0",
