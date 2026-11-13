@@ -48,7 +48,7 @@
     "@quartz-community/breadcrumbs": "^1.0.0",
     "@quartz-community/canvas-page": "^1.0.0",
     "@quartz-community/citations": "^1.0.0",
-    "@quartz-community/cname": "^1.0.0",
+    "@quartz-community/cname": "^1.0.1",
     "@quartz-community/comments": "^1.0.0",
     "@quartz-community/content-index": "^1.0.0",
     "@quartz-community/content-meta": "^1.0.0",
